@@ -1,0 +1,7 @@
+mysql:
+  url: root:root@tcp(127.0.0.1:3306)/OrderManager
+
+redis:
+  url: localhost:6379
+  queues:
+    orders: orders

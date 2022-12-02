@@ -1,0 +1,25 @@
+service:
+  id: 1
+  name: GolangCodeBase
+  logger:
+    level: info
+    devMode: false
+    encoder: console
+  grpc:
+    port: :5001
+    development: true
+  http:
+    port: :5007
+    development: true
+    basePath: /api/v1
+    bankAccountsPath: /api/v1/accounts
+    debugErrorsResponse: true
+    ignoreLogUrls: [ "metrics", "swagger" ]
+
+postgres:
+  url: host=localhost user=admin password=admin dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai
+
+redis:
+  url: localhost:6379
+  queues:
+    orders: orders
