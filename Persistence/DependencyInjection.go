@@ -7,7 +7,6 @@ import (
 var Module = fx.Module("Persistence",
 	fx.Provide(
 		NewDatabaseContext,
-		NewOrderRepository,
 		NewUnitOfWork,
 	),
 )

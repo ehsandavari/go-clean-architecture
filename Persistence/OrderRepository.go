@@ -9,7 +9,7 @@ type sOrderRepository struct {
 	Interfaces.IGenericRepository[Entities.OrderEntity]
 }
 
-func NewOrderRepository(db *sDatabaseContext) Interfaces.IOrderRepository {
+func newOrderRepository(db *sDatabaseContext) Interfaces.IOrderRepository {
 	return sOrderRepository{
 		IGenericRepository: newGenericRepository[Entities.OrderEntity](db),
 	}

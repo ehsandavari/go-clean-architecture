@@ -2,8 +2,7 @@ package Persistence
 
 import (
 	"GolangCodeBase/Domain/Interfaces"
-	"go.uber.org/fx"
-	"gorm.io/gorm"
+	"GolangCodeBase/Infrastructure/Postgres"
 )
 
 type sUnitOfWork struct {
@@ -11,16 +10,10 @@ type sUnitOfWork struct {
 	orderRepository Interfaces.IOrderRepository
 }
 
-type sUnitOfWorkParams struct {
-	fx.In
-	SDatabaseContext *sDatabaseContext
-	IOrderRepository Interfaces.IOrderRepository
-}
-
-func NewUnitOfWork(unitOfWorkParams sUnitOfWorkParams) Interfaces.IUnitOfWork {
+func NewUnitOfWork(databaseContext *sDatabaseContext) Interfaces.IUnitOfWork {
 	return &sUnitOfWork{
-		databaseContext: unitOfWorkParams.SDatabaseContext,
-		orderRepository: unitOfWorkParams.IOrderRepository,
+		databaseContext: databaseContext,
+		orderRepository: newOrderRepository(databaseContext),
 	}
 }
 
@@ -29,9 +22,9 @@ func (r sUnitOfWork) OrderRepository() Interfaces.IOrderRepository {
 }
 
 func (r sUnitOfWork) Do(unitOfWorkBlock Interfaces.UnitOfWorkBlock) error {
-	return r.databaseContext.postgres.DB.Transaction(func(transaction *gorm.DB) error {
-		//r.databaseContext.Postgres().DB = transaction
-		//r.orderRepository = newOrderRepository(r.databaseContext)
+	return r.databaseContext.postgres.Transaction(func(transaction *Postgres.SPostgres) error {
+		r.databaseContext.postgres = transaction
+		r.orderRepository = newOrderRepository(r.databaseContext)
 		return unitOfWorkBlock(r)
 	})
 }
