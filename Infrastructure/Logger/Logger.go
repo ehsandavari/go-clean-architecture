@@ -10,14 +10,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type LogConfig struct {
-	LogLevel string `mapstructure:"level"`
-	DevMode  bool   `mapstructure:"devMode"`
-	Encoder  string `mapstructure:"encoder"`
-}
-
-// Application logger
-type logger struct {
+type sLogger struct {
 	level       string
 	devMode     bool
 	encoding    string
@@ -25,11 +18,16 @@ type logger struct {
 	logger      *zap.Logger
 }
 
-func NewLogger(cfg LogConfig) Interfaces.ILogger {
-	return &logger{level: cfg.LogLevel, devMode: cfg.DevMode, encoding: cfg.Encoder}
+func NewLogger(config SConfig) Interfaces.ILogger {
+	logger := &sLogger{
+		level:    config.LogLevel,
+		devMode:  config.DevMode,
+		encoding: config.Encoder,
+	}
+	logger.config(logger.getLoggerLevel())
+	return logger
 }
 
-// For mapping Config Logger to email_service Logger levels
 var loggerLevelMap = map[string]zapcore.Level{
 	"Debug":  zapcore.DebugLevel,
 	"Info":   zapcore.InfoLevel,
@@ -40,24 +38,15 @@ var loggerLevelMap = map[string]zapcore.Level{
 	"Fatal":  zapcore.FatalLevel,
 }
 
-func (l *logger) getLoggerLevel() zapcore.Level {
+func (l *sLogger) getLoggerLevel() zapcore.Level {
 	level, exist := loggerLevelMap[l.level]
 	if !exist {
 		return zapcore.DebugLevel
 	}
-
 	return level
 }
 
-func (l *logger) setLoggerLevel(logLevel string) zapcore.Level {
-	level, exist := loggerLevelMap[logLevel]
-	if !exist {
-		return zapcore.DebugLevel
-	}
-	return level
-}
-
-func (l *logger) config(logLevel zapcore.Level) {
+func (l *sLogger) config(logLevel zapcore.Level) {
 	logWriter := zapcore.AddSync(os.Stdout)
 
 	var encoderCfg zapcore.EncoderConfig
@@ -67,7 +56,6 @@ func (l *logger) config(logLevel zapcore.Level) {
 		encoderCfg = zap.NewProductionEncoderConfig()
 	}
 
-	var encoder zapcore.Encoder
 	encoderCfg.NameKey = "[SERVICE]"
 	encoderCfg.TimeKey = "[TIME]"
 	encoderCfg.LevelKey = "[LEVEL]"
@@ -78,6 +66,7 @@ func (l *logger) config(logLevel zapcore.Level) {
 	encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
 	encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
 
+	var encoder zapcore.Encoder
 	if l.encoding == "console" {
 		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		encoderCfg.EncodeCaller = zapcore.FullCallerEncoder
@@ -96,116 +85,98 @@ func (l *logger) config(logLevel zapcore.Level) {
 	l.sugarLogger = zapLogger.Sugar()
 }
 
-// InitLogger Init Logger
-func (l *logger) InitLogger() {
-	l.config(l.getLoggerLevel())
-}
-
-func (l *logger) SetLogLevel(logLevel string) {
-	logLvl := l.setLoggerLevel(logLevel)
-	l.config(logLvl)
-	l.logger.Info("(SET LOG LEVEL)", zap.String("LEVEL", logLvl.CapitalString()))
-	l.Sync()
-}
-
 // Named add Logger microservice name
-func (l *logger) Named(name string) {
+func (l *sLogger) Named(name string) {
 	l.logger = l.logger.Named(name)
 	l.sugarLogger = l.sugarLogger.Named(name)
 }
 
 // Debug uses fmt.Sprint to construct and log a message.
-func (l *logger) Debug(args ...interface{}) {
+func (l *sLogger) Debug(args ...interface{}) {
 	l.sugarLogger.Debug(args...)
 }
 
 // Debugf uses fmt.Sprintf to log a templated message
-func (l *logger) Debugf(template string, args ...interface{}) {
+func (l *sLogger) Debugf(template string, args ...interface{}) {
 	l.sugarLogger.Debugf(template, args...)
 }
 
 // Info uses fmt.Sprint to construct and log a message
-func (l *logger) Info(args ...interface{}) {
+func (l *sLogger) Info(args ...interface{}) {
 	l.sugarLogger.Info(args...)
 }
 
 // Infof uses fmt.Sprintf to log a templated message.
-func (l *logger) Infof(template string, args ...interface{}) {
+func (l *sLogger) Infof(template string, args ...interface{}) {
 	l.sugarLogger.Infof(template, args...)
 }
 
 // Printf uses fmt.Sprintf to log a templated message
-func (l *logger) Printf(template string, args ...interface{}) {
+func (l *sLogger) Printf(template string, args ...interface{}) {
 	l.sugarLogger.Infof(template, args...)
 }
 
 // Warn uses fmt.Sprint to construct and log a message.
-func (l *logger) Warn(args ...interface{}) {
+func (l *sLogger) Warn(args ...interface{}) {
 	l.sugarLogger.Warn(args...)
 }
 
 // WarnErrMsg log error message with warn level.
-func (l *logger) WarnErrMsg(msg string, err error) {
+func (l *sLogger) WarnErrMsg(msg string, err error) {
 	l.logger.Warn(msg, zap.String("error", err.Error()))
 }
 
 // Warnf uses fmt.Sprintf to log a templated message.
-func (l *logger) Warnf(template string, args ...interface{}) {
+func (l *sLogger) Warnf(template string, args ...interface{}) {
 	l.sugarLogger.Warnf(template, args...)
 }
 
 // Error uses fmt.Sprint to construct and log a message.
-func (l *logger) Error(args ...interface{}) {
+func (l *sLogger) Error(args ...interface{}) {
 	l.sugarLogger.Error(args...)
 }
 
 // Errorf uses fmt.Sprintf to log a templated message.
-func (l *logger) Errorf(template string, args ...interface{}) {
+func (l *sLogger) Errorf(template string, args ...interface{}) {
 	l.sugarLogger.Errorf(template, args...)
 }
 
 // Err uses error to log a message.
-func (l *logger) Err(msg string, err error) {
+func (l *sLogger) Err(msg string, err error) {
 	l.logger.Error(msg, zap.Error(err))
 }
 
 // DPanic uses fmt.Sprint to construct and log a message. In development, the Logger then panics. (See DPanicLevel for details.)
-func (l *logger) DPanic(args ...interface{}) {
+func (l *sLogger) DPanic(args ...interface{}) {
 	l.sugarLogger.DPanic(args...)
 }
 
 // DPanicf uses fmt.Sprintf to log a templated message. In development, the Logger then panics. (See DPanicLevel for details.)
-func (l *logger) DPanicf(template string, args ...interface{}) {
+func (l *sLogger) DPanicf(template string, args ...interface{}) {
 	l.sugarLogger.DPanicf(template, args...)
 }
 
 // Panic uses fmt.Sprint to construct and log a message, then panics.
-func (l *logger) Panic(args ...interface{}) {
+func (l *sLogger) Panic(args ...interface{}) {
 	l.sugarLogger.Panic(args...)
 }
 
 // Panicf uses fmt.Sprintf to log a templated message, then panics
-func (l *logger) Panicf(template string, args ...interface{}) {
+func (l *sLogger) Panicf(template string, args ...interface{}) {
 	l.sugarLogger.Panicf(template, args...)
 }
 
 // Fatal uses fmt.Sprint to construct and log a message, then calls os.Exit.
-func (l *logger) Fatal(args ...interface{}) {
+func (l *sLogger) Fatal(args ...interface{}) {
 	l.sugarLogger.Fatal(args...)
 }
 
 // Fatalf uses fmt.Sprintf to log a templated message, then calls os.Exit.
-func (l *logger) Fatalf(template string, args ...interface{}) {
+func (l *sLogger) Fatalf(template string, args ...interface{}) {
 	l.sugarLogger.Fatalf(template, args...)
 }
 
-// Sync flushes any buffered log entries
-func (l *logger) Sync() error {
-	go l.logger.Sync()
-	return l.sugarLogger.Sync()
-}
-
-func (l *logger) HttpMiddlewareAccessLogger(method, uri string, status int, size int64, time time.Duration) {
+func (l *sLogger) HttpMiddlewareAccessLogger(method, uri string, status int, size int64, time time.Duration) {
 	l.logger.Info(
 		Enums.HTTP,
 		zap.String(Enums.METHOD, method),
@@ -216,7 +187,7 @@ func (l *logger) HttpMiddlewareAccessLogger(method, uri string, status int, size
 	)
 }
 
-func (l *logger) GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error) {
+func (l *sLogger) GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Info(
 		Enums.GRPC,
 		zap.String(Enums.METHOD, method),
@@ -226,7 +197,7 @@ func (l *logger) GrpcMiddlewareAccessLogger(method string, time time.Duration, m
 	)
 }
 
-func (l *logger) GrpcMiddlewareAccessLoggerErr(method string, time time.Duration, metaData map[string][]string, err error) {
+func (l *sLogger) GrpcMiddlewareAccessLoggerErr(method string, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Error(
 		Enums.GRPC,
 		zap.String(Enums.METHOD, method),
@@ -236,7 +207,7 @@ func (l *logger) GrpcMiddlewareAccessLoggerErr(method string, time time.Duration
 	)
 }
 
-func (l *logger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
+func (l *sLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Info(
 		Enums.GRPC,
 		zap.String(Enums.METHOD, method),
@@ -248,7 +219,7 @@ func (l *logger) GrpcClientInterceptorLogger(method string, req, reply interface
 	)
 }
 
-func (l *logger) GrpcClientInterceptorLoggerErr(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
+func (l *sLogger) GrpcClientInterceptorLoggerErr(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Error(
 		Enums.GRPC,
 		zap.String(Enums.METHOD, method),
@@ -260,7 +231,7 @@ func (l *logger) GrpcClientInterceptorLoggerErr(method string, req, reply interf
 	)
 }
 
-func (l *logger) KafkaProcessMessage(topic string, partition int, message []byte, workerID int, offset int64, time time.Time) {
+func (l *sLogger) KafkaProcessMessage(topic string, partition int, message []byte, workerID int, offset int64, time time.Time) {
 	l.logger.Debug(
 		"(Processing Kafka message)",
 		zap.String(Enums.Topic, topic),
@@ -272,7 +243,7 @@ func (l *logger) KafkaProcessMessage(topic string, partition int, message []byte
 	)
 }
 
-func (l *logger) KafkaLogCommittedMessage(topic string, partition int, offset int64) {
+func (l *sLogger) KafkaLogCommittedMessage(topic string, partition int, offset int64) {
 	l.logger.Debug(
 		"(Committed Kafka message)",
 		zap.String(Enums.Topic, topic),
@@ -281,7 +252,7 @@ func (l *logger) KafkaLogCommittedMessage(topic string, partition int, offset in
 	)
 }
 
-func (l *logger) KafkaProcessMessageWithHeaders(topic string, partition int, message []byte, workerID int, offset int64, time time.Time, headers map[string]interface{}) {
+func (l *sLogger) KafkaProcessMessageWithHeaders(topic string, partition int, message []byte, workerID int, offset int64, time time.Time, headers map[string]interface{}) {
 	l.logger.Debug(
 		"(Processing Kafka message)",
 		zap.String(Enums.Topic, topic),

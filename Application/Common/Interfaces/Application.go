@@ -10,4 +10,6 @@ type (
 		SubscribeOrderCommand(ctx context.Context) error
 		PublishOrderCommand(ctx context.Context, orderEntity Entities.OrderEntity)
 	}
+	IBaseCommand []interface {
+	}
 )

@@ -9,6 +9,7 @@ import (
 
 type SOrderHandlerCommands struct {
 	sConfig     *Config.SConfig
+	iLogger     ApplicationInterfaces.ILogger
 	iUnitOfWork DomainInterfaces.IUnitOfWork
 	iRedis      ApplicationInterfaces.IRedis
 }
@@ -16,6 +17,7 @@ type SOrderHandlerCommands struct {
 type sOrderHandlerCommandsParams struct {
 	fx.In
 	SConfig     *Config.SConfig
+	ILogger     ApplicationInterfaces.ILogger
 	IUnitOfWork DomainInterfaces.IUnitOfWork
 	IRedis      ApplicationInterfaces.IRedis
 }
@@ -23,6 +25,7 @@ type sOrderHandlerCommandsParams struct {
 func NewOrderHandlerCommands(sOrderHandlerCommandsParams sOrderHandlerCommandsParams) ApplicationInterfaces.IOrderHandlerCommands {
 	return &SOrderHandlerCommands{
 		sConfig:     sOrderHandlerCommandsParams.SConfig,
+		iLogger:     sOrderHandlerCommandsParams.ILogger,
 		iUnitOfWork: sOrderHandlerCommandsParams.IUnitOfWork,
 		iRedis:      sOrderHandlerCommandsParams.IRedis,
 	}

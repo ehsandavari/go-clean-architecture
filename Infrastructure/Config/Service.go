@@ -5,5 +5,9 @@ import (
 )
 
 type SService struct {
-	Logger Logger.LogConfig `mapstructure:"Logger"`
+	Id      uint16         `mapstructure:"id"`
+	Name    string         `mapstructure:"name"`
+	Version string         `mapstructure:"version"`
+	Logger  Logger.SConfig `mapstructure:"logger"`
+	Grpc    Logger.SConfig `mapstructure:"logger"`
 }

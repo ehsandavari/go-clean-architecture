@@ -13,9 +13,6 @@ type (
 		Subscribe(ctx context.Context, channelName string) <-chan string
 	}
 	ILogger interface {
-		InitLogger()
-		Sync() error
-		SetLogLevel(logLevel string)
 		Debug(args ...interface{})
 		Debugf(template string, args ...interface{})
 		Info(args ...interface{})

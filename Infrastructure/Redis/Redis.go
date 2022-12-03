@@ -12,7 +12,7 @@ type SRedis struct {
 	Client *redis.Client
 }
 
-func NewRedis(lc fx.Lifecycle, config *SConfig) ApplicationInterfaces.IRedis {
+func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {
 	sRedis := new(SRedis)
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {

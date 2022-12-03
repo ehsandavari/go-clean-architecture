@@ -10,10 +10,10 @@ import (
 )
 
 type SPostgres struct {
-	DB *gorm.DB
+	*gorm.DB
 }
 
-func NewPostgres(lc fx.Lifecycle, config *SConfig) *SPostgres {
+func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 	sPostgres := new(SPostgres)
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {

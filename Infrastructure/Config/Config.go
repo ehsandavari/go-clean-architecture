@@ -8,7 +8,7 @@ import (
 )
 
 type SConfig struct {
-	Service  SService         `mapstructure:"postgres"`
+	Service  SService         `mapstructure:"service"`
 	Postgres Postgres.SConfig `mapstructure:"postgres"`
 	Redis    Redis.SConfig    `mapstructure:"redis"`
 }
