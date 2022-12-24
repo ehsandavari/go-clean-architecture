@@ -1,7 +1,7 @@
 package Postgres
 
 import (
-	DomainEntities "GolangCodeBase/Domain/Entities"
+	"GolangCodeBase/Domain/Entities"
 	"context"
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
@@ -35,7 +35,7 @@ func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 
 func (r *SPostgres) setup() error {
 	return r.DB.AutoMigrate(
-		new(DomainEntities.OrderEntity),
+		new(Entities.OrderEntity),
 	)
 }
 
@@ -48,5 +48,8 @@ func (r *SPostgres) close() error {
 }
 
 func (r *SPostgres) Transaction(fc func(tx *SPostgres) error) (err error) {
-	return r.DB.Transaction(fc.(func(tx *gorm.DB) error))
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		r.DB = tx
+		return fc(r)
+	})
 }

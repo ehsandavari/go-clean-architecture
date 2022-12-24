@@ -24,9 +24,8 @@ func (sOrderController SOrderController) Order(ctx iris.Context) {
 	params := &Dto.CreateOrderRequest{}
 	Common.ReadJson(ctx, &params)
 	sOrderController.iOrderCommand.PublishOrderCommand(ctx.Request().Context(), DomainEntities.OrderEntity{
-		Id:    params.Id,
-		Price: params.Price,
-		Title: params.Title,
+		Price: 0,
+		Title: "",
 	})
 	ctx.StatusCode(http.StatusOK)
 }

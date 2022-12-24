@@ -2,21 +2,47 @@ package Commands
 
 import (
 	"GolangCodeBase/Application/Common"
-	"GolangCodeBase/Domain/Entities"
+	ApplicationInterfaces "GolangCodeBase/Application/Common/Interfaces"
 	"GolangCodeBase/Domain/Interfaces"
+	DomainInterfaces "GolangCodeBase/Domain/Interfaces"
+	"GolangCodeBase/Infrastructure/Config"
 	"context"
 	"fmt"
 )
 
-func (r *SOrderHandlerCommands) PublishOrderCommand(ctx context.Context, orderEntity Entities.OrderEntity) {
+type SPublishOrderCommand struct {
+	Price uint   `json:"price" validate:"required,gte=0,email"`
+	Title string `json:"title" validate:"required,gte=0"`
+}
+
+type sPublishOrderCommandHandler struct {
+	sConfig     *Config.SConfig
+	iLogger     ApplicationInterfaces.ILogger
+	iUnitOfWork DomainInterfaces.IUnitOfWork
+	iRedis      ApplicationInterfaces.IRedis
+}
+
+func newPublishOrderCommandHandler(
+	sConfig *Config.SConfig,
+	iLogger ApplicationInterfaces.ILogger,
+	iUnitOfWork DomainInterfaces.IUnitOfWork,
+	iRedis ApplicationInterfaces.IRedis,
+) ApplicationInterfaces.IBaseCommand[SPublishOrderCommand] {
+	return sPublishOrderCommandHandler{
+		sConfig:     sConfig,
+		iLogger:     iLogger,
+		iUnitOfWork: iUnitOfWork,
+		iRedis:      iRedis,
+	}
+}
+
+func (r *sPublishOrderCommandHandler) Handle(ctx context.Context, command SPublishOrderCommand) {
 	err := r.iUnitOfWork.Do(func(work Interfaces.IUnitOfWork) error {
-		work.OrderRepository().Add(orderEntity)
-		orderEntity.Id += 1
-		work.OrderRepository().Add(orderEntity)
+		work.OrderRepository().Add(command)
 		return nil
 	})
 	fmt.Println(err)
-	err = r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], Common.MarshalJson(orderEntity))
+	err = r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], Common.MarshalJson(command))
 	if err != nil {
 		panic(err)
 	}
