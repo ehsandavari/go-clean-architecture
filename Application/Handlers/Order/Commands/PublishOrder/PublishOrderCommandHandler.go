@@ -1,4 +1,4 @@
-package Commands
+package PublishOrder
 
 import (
 	"GolangCodeBase/Application/Common"
@@ -9,11 +9,6 @@ import (
 	"context"
 	"fmt"
 )
-
-type SPublishOrderCommand struct {
-	Price uint   `json:"price" validate:"required,gte=0,email"`
-	Title string `json:"title" validate:"required,gte=0"`
-}
 
 type sPublishOrderCommandHandler struct {
 	sConfig     *Config.SConfig
@@ -27,7 +22,7 @@ func newPublishOrderCommandHandler(
 	iLogger ApplicationInterfaces.ILogger,
 	iUnitOfWork DomainInterfaces.IUnitOfWork,
 	iRedis ApplicationInterfaces.IRedis,
-) ApplicationInterfaces.IBaseCommand[SPublishOrderCommand] {
+) sPublishOrderCommandHandler {
 	return sPublishOrderCommandHandler{
 		sConfig:     sConfig,
 		iLogger:     iLogger,
