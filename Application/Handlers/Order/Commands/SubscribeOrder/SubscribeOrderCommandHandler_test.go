@@ -1,4 +1,4 @@
-package Commands
+package SubscribeOrder
 
 import (
 	ApplicationInterfaces "GolangCodeBase/Application/Common/Interfaces"

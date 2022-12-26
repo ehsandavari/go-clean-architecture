@@ -1,31 +1,22 @@
 package Controller
 
 import (
-	ApplicationInterfaces "GolangCodeBase/Application/Common/Interfaces"
-	DomainEntities "GolangCodeBase/Domain/Entities"
+	"GolangCodeBase/Application/Handlers/Order/Commands/PublishOrder"
 	"GolangCodeBase/Presentation/Common"
 	"GolangCodeBase/Presentation/Controller/Dto"
+	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/mehdihadeli/go-mediatr"
 	"net/http"
 )
 
-type SOrderController struct {
-	iOrderCommand ApplicationInterfaces.IOrderHandlerCommands
-}
-
-func NewOrderController(iOrderCommand ApplicationInterfaces.IOrderHandlerCommands) SOrderController {
-	return SOrderController{
-		iOrderCommand: iOrderCommand,
-	}
-}
-
 // Order todo: use Validator for request body
-func (sOrderController SOrderController) Order(ctx iris.Context) {
+func Order(ctx iris.Context) {
 	params := &Dto.CreateOrderRequest{}
 	Common.ReadJson(ctx, &params)
-	sOrderController.iOrderCommand.PublishOrderCommand(ctx.Request().Context(), DomainEntities.OrderEntity{
-		Price: 0,
-		Title: "",
-	})
+	_, err := mediatr.Send[PublishOrder.SPublishOrderCommand, string](ctx.Request().Context(), PublishOrder.NewSPublishOrderCommand(params.Price, params.Title))
+	if err != nil {
+		fmt.Println(err)
+	}
 	ctx.StatusCode(http.StatusOK)
 }

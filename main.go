@@ -2,7 +2,6 @@ package main
 
 import (
 	"GolangCodeBase/Application"
-	"GolangCodeBase/Application/Common/Interfaces"
 	"GolangCodeBase/Infrastructure"
 	"GolangCodeBase/Persistence"
 	"GolangCodeBase/Presentation"
@@ -16,20 +15,20 @@ func main() {
 }
 
 func run() {
+	Application.Modules = append(Application.Modules, Infrastructure.Module)
+	Application.Modules = append(Application.Modules, Persistence.Module)
+	Application.Modules = append(Application.Modules, Presentation.Module)
+	Application.Modules = append(Application.Modules, fx.Invoke(serve))
 	fx.New(
-		Infrastructure.Module,
-		Persistence.Module,
-		Presentation.Module,
-		Application.Module,
-		fx.Invoke(serve),
+		Application.Modules...,
 	).Run()
 }
 
-func serve(lc fx.Lifecycle, api *Api.SApplication, commands Interfaces.IOrderHandlerCommands) {
+func serve(lc fx.Lifecycle, api *Api.SApplication) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go api.SetupAPI()
-			return commands.SubscribeOrderCommand(ctx)
+			return nil
 		},
 		OnStop: func(ctx context.Context) error {
 			return nil

@@ -1,8 +1,8 @@
 package PublishOrder
 
 type SPublishOrderCommand struct {
-	Price uint   `json:"price" validate:"required,gte=0,email"`
-	Title string `json:"title" validate:"required,gte=0"`
+	Price uint   `json:"price" validate:"required"`
+	Title string `json:"title" validate:"required"`
 }
 
 func NewSPublishOrderCommand(price uint, title string) SPublishOrderCommand {

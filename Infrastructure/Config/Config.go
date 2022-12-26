@@ -16,7 +16,7 @@ type SConfig struct {
 func NewConfig() (*SConfig, error) {
 	viper.AutomaticEnv()
 	viper.AddConfigPath(".")
-	viper.SetConfigName("Config." + os.Getenv("env"))
+	viper.SetConfigName("config." + os.Getenv("env"))
 	viper.SetConfigType("yml")
 	viper.BindEnv()
 
