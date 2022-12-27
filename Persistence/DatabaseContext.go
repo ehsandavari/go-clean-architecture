@@ -5,12 +5,12 @@ import (
 	"go.uber.org/fx"
 )
 
-type sDatabaseContext struct {
-	postgres *Postgres.SPostgres
-}
-
 func init() {
 	Modules = append(Modules, fx.Provide(NewDatabaseContext))
+}
+
+type sDatabaseContext struct {
+	postgres *Postgres.SPostgres
 }
 
 func NewDatabaseContext(postgres *Postgres.SPostgres) (*sDatabaseContext, error) {

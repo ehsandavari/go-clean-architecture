@@ -10,12 +10,6 @@ import (
 	"os"
 )
 
-type SConfig struct {
-	Service  SService         `mapstructure:"service"`
-	Postgres Postgres.SConfig `mapstructure:"postgres"`
-	Redis    Redis.SConfig    `mapstructure:"redis"`
-}
-
 func init() {
 	Infrastructure.Modules = append(Infrastructure.Modules,
 		fx.Provide(NewConfig),
@@ -23,6 +17,12 @@ func init() {
 			return config.Service.Logger, config.Postgres, config.Redis
 		}),
 	)
+}
+
+type SConfig struct {
+	Service  SService         `mapstructure:"service"`
+	Postgres Postgres.SConfig `mapstructure:"postgres"`
+	Redis    Redis.SConfig    `mapstructure:"redis"`
 }
 
 func NewConfig() (*SConfig, error) {

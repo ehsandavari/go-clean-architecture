@@ -10,12 +10,12 @@ import (
 	"log"
 )
 
-type SPostgres struct {
-	*gorm.DB
-}
-
 func init() {
 	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewPostgres))
+}
+
+type SPostgres struct {
+	*gorm.DB
 }
 
 func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {

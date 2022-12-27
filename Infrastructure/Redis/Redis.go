@@ -9,12 +9,12 @@ import (
 	"log"
 )
 
-type SRedis struct {
-	Client *redis.Client
-}
-
 func init() {
 	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewRedis))
+}
+
+type SRedis struct {
+	Client *redis.Client
 }
 
 func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {

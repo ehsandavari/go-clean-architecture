@@ -12,16 +12,16 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+func init() {
+	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewLogger))
+}
+
 type sLogger struct {
 	level       string
 	devMode     bool
 	encoding    string
 	sugarLogger *zap.SugaredLogger
 	logger      *zap.Logger
-}
-
-func init() {
-	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewLogger))
 }
 
 func NewLogger(config SConfig) Interfaces.ILogger {

@@ -6,13 +6,13 @@ import (
 	"go.uber.org/fx"
 )
 
+func init() {
+	Modules = append(Modules, fx.Provide(NewUnitOfWork))
+}
+
 type sUnitOfWork struct {
 	databaseContext *sDatabaseContext
 	orderRepository Interfaces.IOrderRepository
-}
-
-func init() {
-	Modules = append(Modules, fx.Provide(NewUnitOfWork))
 }
 
 func NewUnitOfWork(databaseContext *sDatabaseContext) Interfaces.IUnitOfWork {

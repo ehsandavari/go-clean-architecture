@@ -10,6 +10,21 @@ import (
 	"go.uber.org/fx"
 )
 
+func init() {
+	Application.Modules = append(Application.Modules, fx.Invoke(func(
+		sConfig *Config.SConfig,
+		iLogger ApplicationInterfaces.ILogger,
+		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
+		iRedis ApplicationInterfaces.IRedis,
+	) {
+		if err := mediatr.RegisterRequestHandler[SPublishOrderCommand, string](
+			NewPublishOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
+		); err != nil {
+			panic(err)
+		}
+	}))
+}
+
 type SPublishOrderCommandHandler struct {
 	sConfig     *Config.SConfig
 	iLogger     ApplicationInterfaces.ILogger
@@ -29,21 +44,6 @@ func NewPublishOrderCommandHandler(
 		iUnitOfWork: iUnitOfWork,
 		iRedis:      iRedis,
 	}
-}
-
-func init() {
-	Application.Modules = append(Application.Modules, fx.Invoke(func(
-		sConfig *Config.SConfig,
-		iLogger ApplicationInterfaces.ILogger,
-		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
-		iRedis ApplicationInterfaces.IRedis,
-	) {
-		if err := mediatr.RegisterRequestHandler[SPublishOrderCommand, string](
-			NewPublishOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
-		); err != nil {
-			panic(err)
-		}
-	}))
 }
 
 func (r SPublishOrderCommandHandler) Handle(ctx context.Context, command SPublishOrderCommand) (string, error) {

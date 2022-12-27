@@ -7,11 +7,11 @@ import (
 	"go.uber.org/fx"
 )
 
-type SApplication struct {
-}
-
 func init() {
 	Presentation.Modules = append(Presentation.Modules, fx.Provide(NewApplication))
+}
+
+type SApplication struct {
 }
 
 func NewApplication() *SApplication {

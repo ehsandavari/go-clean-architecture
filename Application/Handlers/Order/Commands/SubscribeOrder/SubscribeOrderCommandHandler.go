@@ -12,6 +12,21 @@ import (
 	"go.uber.org/fx"
 )
 
+func init() {
+	Application.Modules = append(Application.Modules, fx.Invoke(func(
+		sConfig *Config.SConfig,
+		iLogger Interfaces.ILogger,
+		iUnitOfWork Interfaces.IUnitOfWork,
+		iRedis Interfaces.IRedis,
+	) {
+		if err := mediatr.RegisterRequestHandler[SSubscribeOrderCommand, string](
+			NewSubscribeOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
+		); err != nil {
+			panic(err)
+		}
+	}))
+}
+
 type SSubscribeOrderCommandHandler struct {
 	sConfig     *Config.SConfig
 	iLogger     Interfaces.ILogger
@@ -31,21 +46,6 @@ func NewSubscribeOrderCommandHandler(
 		iUnitOfWork: iUnitOfWork,
 		iRedis:      iRedis,
 	}
-}
-
-func init() {
-	Application.Modules = append(Application.Modules, fx.Invoke(func(
-		sConfig *Config.SConfig,
-		iLogger Interfaces.ILogger,
-		iUnitOfWork Interfaces.IUnitOfWork,
-		iRedis Interfaces.IRedis,
-	) {
-		if err := mediatr.RegisterRequestHandler[SSubscribeOrderCommand, string](
-			NewSubscribeOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
-		); err != nil {
-			panic(err)
-		}
-	}))
 }
 
 func (r SSubscribeOrderCommandHandler) Handle(ctx context.Context, command SSubscribeOrderCommand) (string, error) {
