@@ -15,12 +15,13 @@ func main() {
 }
 
 func run() {
-	Application.Modules = append(Application.Modules, Infrastructure.Module)
-	Application.Modules = append(Application.Modules, Persistence.Module)
-	Application.Modules = append(Application.Modules, Presentation.Module)
-	Application.Modules = append(Application.Modules, fx.Invoke(serve))
+	var Modules []fx.Option
+	Modules = append(Modules, Infrastructure.Modules...)
+	Modules = append(Modules, Persistence.Modules...)
+	Modules = append(Modules, Presentation.Modules...)
+	Modules = append(Modules, Application.Modules...)
 	fx.New(
-		Application.Modules...,
+		append(Modules, fx.Invoke(serve))...,
 	).Run()
 }
 

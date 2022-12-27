@@ -1,13 +1,18 @@
 package Persistence
 
 import (
-	"GolangCodeBase/Domain/Interfaces"
+	"GolangCodeBase/Application/Common/Interfaces"
 	"GolangCodeBase/Infrastructure/Postgres"
+	"go.uber.org/fx"
 )
 
 type sUnitOfWork struct {
 	databaseContext *sDatabaseContext
 	orderRepository Interfaces.IOrderRepository
+}
+
+func init() {
+	Modules = append(Modules, fx.Provide(NewUnitOfWork))
 }
 
 func NewUnitOfWork(databaseContext *sDatabaseContext) Interfaces.IUnitOfWork {

@@ -6,6 +6,6 @@ type OrderEntity struct {
 	Title string
 }
 
-func (ne OrderEntity) TableName() string {
+func (a OrderEntity) TableName() string {
 	return "orders"
 }

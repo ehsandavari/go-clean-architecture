@@ -1,8 +1,8 @@
 package Persistence
 
 import (
+	"GolangCodeBase/Application/Common/Interfaces"
 	"GolangCodeBase/Domain/Entities"
-	"GolangCodeBase/Domain/Interfaces"
 )
 
 type sGenericRepository[T Entities.IEntityConstraint] struct {

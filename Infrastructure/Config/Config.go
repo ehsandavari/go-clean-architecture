@@ -1,9 +1,12 @@
 package Config
 
 import (
+	"GolangCodeBase/Infrastructure"
+	"GolangCodeBase/Infrastructure/Logger"
 	"GolangCodeBase/Infrastructure/Postgres"
 	"GolangCodeBase/Infrastructure/Redis"
 	"github.com/spf13/viper"
+	"go.uber.org/fx"
 	"os"
 )
 
@@ -11,6 +14,15 @@ type SConfig struct {
 	Service  SService         `mapstructure:"service"`
 	Postgres Postgres.SConfig `mapstructure:"postgres"`
 	Redis    Redis.SConfig    `mapstructure:"redis"`
+}
+
+func init() {
+	Infrastructure.Modules = append(Infrastructure.Modules,
+		fx.Provide(NewConfig),
+		fx.Provide(func(config *SConfig) (Logger.SConfig, Postgres.SConfig, Redis.SConfig) {
+			return config.Service.Logger, config.Postgres, config.Redis
+		}),
+	)
 }
 
 func NewConfig() (*SConfig, error) {
@@ -29,4 +41,16 @@ func NewConfig() (*SConfig, error) {
 		return nil, err
 	}
 	return config, nil
+}
+
+func (r SConfig) GetServiceId() uint16 {
+	return r.Service.Id
+}
+
+func (r SConfig) GetServiceName() string {
+	return r.Service.Name
+}
+
+func (r SConfig) GetServiceVersion() string {
+	return r.Service.Version
 }

@@ -3,6 +3,8 @@ package Logger
 import (
 	"GolangCodeBase/Application/Common/Interfaces"
 	"GolangCodeBase/Domain/Enums"
+	"GolangCodeBase/Infrastructure"
+	"go.uber.org/fx"
 	"os"
 	"time"
 
@@ -16,6 +18,10 @@ type sLogger struct {
 	encoding    string
 	sugarLogger *zap.SugaredLogger
 	logger      *zap.Logger
+}
+
+func init() {
+	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewLogger))
 }
 
 func NewLogger(config SConfig) Interfaces.ILogger {

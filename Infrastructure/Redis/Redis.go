@@ -2,6 +2,7 @@ package Redis
 
 import (
 	ApplicationInterfaces "GolangCodeBase/Application/Common/Interfaces"
+	"GolangCodeBase/Infrastructure"
 	"context"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/fx"
@@ -12,6 +13,10 @@ type SRedis struct {
 	Client *redis.Client
 }
 
+func init() {
+	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewRedis))
+}
+
 func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {
 	sRedis := new(SRedis)
 	lc.Append(fx.Hook{
@@ -19,11 +24,11 @@ func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {
 			sRedis.Client = redis.NewClient(&redis.Options{
 				Addr: config.URL,
 			})
-			log.Println("postgres database loaded successfully")
+			log.Println("redis connection opened")
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			log.Println("postgres database connection closed")
+			log.Println("redis connection closed")
 			return sRedis.close()
 		},
 	})

@@ -2,6 +2,7 @@ package Postgres
 
 import (
 	"GolangCodeBase/Domain/Entities"
+	"GolangCodeBase/Infrastructure"
 	"context"
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
@@ -13,6 +14,10 @@ type SPostgres struct {
 	*gorm.DB
 }
 
+func init() {
+	Infrastructure.Modules = append(Infrastructure.Modules, fx.Provide(NewPostgres))
+}
+
 func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 	sPostgres := new(SPostgres)
 	lc.Append(fx.Hook{
@@ -22,11 +27,11 @@ func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 				return err
 			}
 
-			log.Println("postgres database connection successfully")
+			log.Println("postgres connection opened")
 			return sPostgres.setup()
 		},
 		OnStop: func(ctx context.Context) error {
-			log.Println("postgres database connection closed")
+			log.Println("postgres connection closed")
 			return sPostgres.close()
 		},
 	})

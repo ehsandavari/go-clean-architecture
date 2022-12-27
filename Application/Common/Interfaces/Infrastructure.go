@@ -5,9 +5,12 @@ import (
 	"time"
 )
 
-//go:generate mockgen -destination=../../Mocks/MockIRedis.go -package=MockIRedis GolangCodeBase/Application/Common/Interfaces IRedis
+//go:generate mockgen -destination=../../Mocks/MockInferastructure.go -package=Mocks GolangCodeBase/Application/Common/Interfaces IRedis,ILogger
 
 type (
+	IConfig interface {
+		Get() error
+	}
 	IRedis interface {
 		Publish(ctx context.Context, channelName string, message interface{}) error
 		Subscribe(ctx context.Context, channelName string) <-chan string

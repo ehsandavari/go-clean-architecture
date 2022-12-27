@@ -3,7 +3,6 @@ module GolangCodeBase
 go 1.18
 
 require (
-	emperror.dev/errors v0.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/mock v1.6.0
 	github.com/kataras/iris/v12 v12.1.8

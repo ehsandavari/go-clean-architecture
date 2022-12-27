@@ -5,5 +5,3 @@ import (
 )
 
 var Modules []fx.Option
-
-var Module = fx.Module("Application", Modules...)

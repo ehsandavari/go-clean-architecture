@@ -2,9 +2,8 @@ package SubscribeOrder
 
 import (
 	"GolangCodeBase/Application"
-	ApplicationInterfaces "GolangCodeBase/Application/Common/Interfaces"
-	DomainEntities "GolangCodeBase/Domain/Entities"
-	DomainInterfaces "GolangCodeBase/Domain/Interfaces"
+	"GolangCodeBase/Application/Common/Interfaces"
+	"GolangCodeBase/Domain/Entities"
 	"GolangCodeBase/Infrastructure/Config"
 	"context"
 	"encoding/json"
@@ -15,16 +14,16 @@ import (
 
 type SSubscribeOrderCommandHandler struct {
 	sConfig     *Config.SConfig
-	iLogger     ApplicationInterfaces.ILogger
-	iUnitOfWork DomainInterfaces.IUnitOfWork
-	iRedis      ApplicationInterfaces.IRedis
+	iLogger     Interfaces.ILogger
+	iUnitOfWork Interfaces.IUnitOfWork
+	iRedis      Interfaces.IRedis
 }
 
 func NewSubscribeOrderCommandHandler(
 	sConfig *Config.SConfig,
-	iLogger ApplicationInterfaces.ILogger,
-	iUnitOfWork DomainInterfaces.IUnitOfWork,
-	iRedis ApplicationInterfaces.IRedis,
+	iLogger Interfaces.ILogger,
+	iUnitOfWork Interfaces.IUnitOfWork,
+	iRedis Interfaces.IRedis,
 ) SSubscribeOrderCommandHandler {
 	return SSubscribeOrderCommandHandler{
 		sConfig:     sConfig,
@@ -35,26 +34,24 @@ func NewSubscribeOrderCommandHandler(
 }
 
 func init() {
-	Application.Modules = append(Application.Modules, fx.Invoke(registerHandler))
-}
-
-func registerHandler(
-	sConfig *Config.SConfig,
-	iLogger ApplicationInterfaces.ILogger,
-	iUnitOfWork DomainInterfaces.IUnitOfWork,
-	iRedis ApplicationInterfaces.IRedis,
-) {
-	if err := mediatr.RegisterRequestHandler[SSubscribeOrderCommand, string](
-		NewSubscribeOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
-	); err != nil {
-		panic(err)
-	}
+	Application.Modules = append(Application.Modules, fx.Invoke(func(
+		sConfig *Config.SConfig,
+		iLogger Interfaces.ILogger,
+		iUnitOfWork Interfaces.IUnitOfWork,
+		iRedis Interfaces.IRedis,
+	) {
+		if err := mediatr.RegisterRequestHandler[SSubscribeOrderCommand, string](
+			NewSubscribeOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
+		); err != nil {
+			panic(err)
+		}
+	}))
 }
 
 func (r SSubscribeOrderCommandHandler) Handle(ctx context.Context, command SSubscribeOrderCommand) (string, error) {
 	channel := r.iRedis.Subscribe(ctx, r.sConfig.Redis.Queues["Orders"])
 	go func() {
-		orderEntity := DomainEntities.OrderEntity{}
+		orderEntity := Entities.OrderEntity{}
 		for {
 			select {
 			case channelData := <-channel:

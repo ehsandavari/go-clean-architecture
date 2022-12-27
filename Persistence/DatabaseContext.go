@@ -9,13 +9,12 @@ type sDatabaseContext struct {
 	postgres *Postgres.SPostgres
 }
 
-type sDatabaseContextParams struct {
-	fx.In
-	Postgres *Postgres.SPostgres
+func init() {
+	Modules = append(Modules, fx.Provide(NewDatabaseContext))
 }
 
-func NewDatabaseContext(databaseContextParams sDatabaseContextParams) (*sDatabaseContext, error) {
+func NewDatabaseContext(postgres *Postgres.SPostgres) (*sDatabaseContext, error) {
 	return &sDatabaseContext{
-		postgres: databaseContextParams.Postgres,
+		postgres: postgres,
 	}, nil
 }
