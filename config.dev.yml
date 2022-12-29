@@ -1,6 +1,6 @@
 service:
   id: 1
-  name: GolangCodeBase
+  name: golangCodeBase
   version: 1.0.0
   logger:
     level: info

@@ -1,4 +1,4 @@
-module GolangCodeBase
+module golangCodeBase
 
 go 1.18
 
