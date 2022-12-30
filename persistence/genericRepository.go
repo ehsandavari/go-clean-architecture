@@ -3,24 +3,27 @@ package persistence
 import (
 	"golangCodeBase/application/common/interfaces"
 	"golangCodeBase/domain/entities"
+	"golangCodeBase/persistence/models"
 )
 
-type sGenericRepository[T entities.IEntityConstraint] struct {
-	dataBaseContext *sDatabaseContext
+type sGenericRepository[TD models.DataModel[TE], TE entities.IEntityConstraint] struct {
+	dataBaseContext *SDatabaseContext
 }
 
-func newGenericRepository[T entities.IEntityConstraint](dataBaseContext *sDatabaseContext) interfaces.IGenericRepository[T] {
-	return sGenericRepository[T]{
+func newGenericRepository[TD models.DataModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
+	return sGenericRepository[TD, TE]{
 		dataBaseContext: dataBaseContext,
 	}
 }
 
-func (r sGenericRepository[T]) Find() (find T) {
-	r.dataBaseContext.postgres.DB.First(&find)
-	return find
+func (r sGenericRepository[TD, TE]) Find() TE {
+	var model TD
+	r.dataBaseContext.Postgres.DB.First(&model)
+	return model.ToEntity()
 }
 
-func (r sGenericRepository[T]) Add(model T) T {
-	r.dataBaseContext.postgres.DB.Create(&model)
-	return model
+func (r sGenericRepository[TD, TE]) Add(entity TE) int64 {
+	var model TD
+	model = model.FromEntity(entity).(TD)
+	return r.dataBaseContext.Postgres.DB.Create(&model).RowsAffected
 }

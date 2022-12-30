@@ -2,11 +2,13 @@ package publishOrder
 
 import (
 	"context"
+	"fmt"
 	"github.com/mehdihadeli/go-mediatr"
 	"go.uber.org/fx"
 	"golangCodeBase/application"
 	"golangCodeBase/application/common"
 	ApplicationInterfaces "golangCodeBase/application/common/interfaces"
+	"golangCodeBase/domain/entities"
 	"golangCodeBase/infrastructure/config"
 )
 
@@ -47,6 +49,10 @@ func NewPublishOrderCommandHandler(
 }
 
 func (r SPublishOrderCommandHandler) Handle(ctx context.Context, command SPublishOrderCommand) (string, error) {
+	aa := r.iUnitOfWork.OrderRepository().Find()
+	fmt.Println(aa)
+	a := r.iUnitOfWork.OrderRepository().Add(entities.NewOrderEntity(command.Price, command.Title))
+	fmt.Println(a)
 	err := r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], common.MarshalJson(command))
 	if err != nil {
 		return "", err

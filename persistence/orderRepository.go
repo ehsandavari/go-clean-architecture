@@ -3,14 +3,15 @@ package persistence
 import (
 	"golangCodeBase/application/common/interfaces"
 	"golangCodeBase/domain/entities"
+	"golangCodeBase/persistence/models"
 )
 
 type sOrderRepository struct {
 	interfaces.IGenericRepository[entities.OrderEntity]
 }
 
-func newOrderRepository(db *sDatabaseContext) interfaces.IOrderRepository {
+func newOrderRepository(db *SDatabaseContext) interfaces.IOrderRepository {
 	return sOrderRepository{
-		IGenericRepository: newGenericRepository[entities.OrderEntity](db),
+		IGenericRepository: newGenericRepository[models.OrderModel, entities.OrderEntity](db),
 	}
 }

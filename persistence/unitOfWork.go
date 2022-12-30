@@ -11,11 +11,11 @@ func init() {
 }
 
 type sUnitOfWork struct {
-	databaseContext *sDatabaseContext
+	databaseContext *SDatabaseContext
 	orderRepository interfaces.IOrderRepository
 }
 
-func NewUnitOfWork(databaseContext *sDatabaseContext) interfaces.IUnitOfWork {
+func NewUnitOfWork(databaseContext *SDatabaseContext) interfaces.IUnitOfWork {
 	return &sUnitOfWork{
 		databaseContext: databaseContext,
 		orderRepository: newOrderRepository(databaseContext),
@@ -26,9 +26,9 @@ func (r sUnitOfWork) OrderRepository() interfaces.IOrderRepository {
 	return r.orderRepository
 }
 
-func (r sUnitOfWork) Do(unitOfWorkBlock interfaces.UnitOfWorkBlock) error {
-	return r.databaseContext.postgres.Transaction(func(transaction *postgres.SPostgres) error {
-		r.databaseContext.postgres = transaction
+func (r sUnitOfWork) Do(unitOfWorkBlock func(interfaces.IUnitOfWork) error) error {
+	return r.databaseContext.Postgres.Transaction(func(transaction *postgres.SPostgres) error {
+		r.databaseContext.Postgres = transaction
 		r.orderRepository = newOrderRepository(r.databaseContext)
 		return unitOfWorkBlock(r)
 	})

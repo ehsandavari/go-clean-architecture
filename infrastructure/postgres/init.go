@@ -52,7 +52,7 @@ func (r *SPostgres) close() error {
 	return db.Close()
 }
 
-func (r *SPostgres) Transaction(fc func(tx *SPostgres) error) (err error) {
+func (r *SPostgres) Transaction(fc func(*SPostgres) error) (err error) {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		r.DB = tx
 		return fc(r)

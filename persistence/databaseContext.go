@@ -6,15 +6,15 @@ import (
 )
 
 func init() {
-	Modules = append(Modules, fx.Provide(NewDatabaseContext))
+	Modules = append(Modules, fx.Provide(newDatabaseContext))
 }
 
-type sDatabaseContext struct {
-	postgres *postgres.SPostgres
+type SDatabaseContext struct {
+	Postgres *postgres.SPostgres
 }
 
-func NewDatabaseContext(postgres *postgres.SPostgres) (*sDatabaseContext, error) {
-	return &sDatabaseContext{
-		postgres: postgres,
+func newDatabaseContext(postgres *postgres.SPostgres) (*SDatabaseContext, error) {
+	return &SDatabaseContext{
+		Postgres: postgres,
 	}, nil
 }

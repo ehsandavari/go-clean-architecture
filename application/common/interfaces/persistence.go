@@ -7,16 +7,15 @@ import (
 //go:generate mockgen -destination=../../mocks/mockPersistence.go -package=mocks golangCodeBase/application/common/interfaces IUnitOfWork,IOrderRepository
 
 type (
-	IGenericRepository[T entities.IEntityConstraint] interface {
-		Find() T
-		Add(model T) T
+	IGenericRepository[TE entities.IEntityConstraint] interface {
+		Find() TE
+		Add(model TE) int64
 	}
 	IOrderRepository interface {
 		IGenericRepository[entities.OrderEntity]
 	}
-	UnitOfWorkBlock func(IUnitOfWork) error
-	IUnitOfWork     interface {
+	IUnitOfWork interface {
 		OrderRepository() IOrderRepository
-		Do(UnitOfWorkBlock) error
+		Do(func(IUnitOfWork) error) error
 	}
 )
