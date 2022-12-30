@@ -1,6 +1,9 @@
 package entities
 
+import "github.com/google/uuid"
+
 type OrderEntity struct {
+	Id    uuid.UUID
 	Price uint
 	Title string
 }

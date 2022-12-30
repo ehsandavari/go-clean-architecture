@@ -3,7 +3,7 @@ package persistence
 import (
 	"golangCodeBase/application/common/interfaces"
 	"golangCodeBase/domain/entities"
-	"golangCodeBase/persistence/models"
+	"golangCodeBase/infrastructure/postgres/models"
 )
 
 type sOrderRepository struct {

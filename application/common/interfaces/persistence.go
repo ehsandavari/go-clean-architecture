@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"github.com/google/uuid"
 	"golangCodeBase/domain/entities"
 )
 
@@ -8,8 +9,12 @@ import (
 
 type (
 	IGenericRepository[TE entities.IEntityConstraint] interface {
-		Find() TE
+		First() TE
+		Last() TE
+		All() []TE
 		Add(model TE) int64
+		Update(id uuid.UUID, model TE) int64
+		Delete(id uuid.UUID) int64
 	}
 	IOrderRepository interface {
 		IGenericRepository[entities.OrderEntity]

@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.3.0
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/mehdihadeli/go-mediatr v1.1.9
 	github.com/spf13/viper v1.12.0

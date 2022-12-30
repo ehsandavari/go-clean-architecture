@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"go.uber.org/fx"
-	"golangCodeBase/domain/entities"
 	"golangCodeBase/infrastructure"
+	"golangCodeBase/infrastructure/postgres/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -40,7 +40,7 @@ func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 
 func (r *SPostgres) setup() error {
 	return r.DB.AutoMigrate(
-		new(entities.OrderEntity),
+		new(models.OrderModel),
 	)
 }
 
