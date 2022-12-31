@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/ehsandavari/golang-clean-architecture/presentation"
 	"github.com/ehsandavari/golang-clean-architecture/presentation/common"
+	"github.com/kataras/iris/v12"
 	"go.uber.org/fx"
 )
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
+	"github.com/go-redis/redis/v9"
 	"go.uber.org/fx"
 	"log"
 )
