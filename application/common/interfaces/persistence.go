@@ -1,8 +1,8 @@
 package interfaces
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/google/uuid"
-	"golangCodeBase/domain/entities"
 )
 
 //go:generate mockgen -destination=../../mocks/mockPersistence.go -package=mocks golangCodeBase/application/common/interfaces IUnitOfWork,IOrderRepository

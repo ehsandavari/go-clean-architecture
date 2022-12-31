@@ -1,9 +1,9 @@
 package persistence
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/google/uuid"
-	"golangCodeBase/application/common/interfaces"
-	"golangCodeBase/domain/entities"
 )
 
 type sGenericRepository[TD IDataModel[TE], TE entities.IEntityConstraint] struct {

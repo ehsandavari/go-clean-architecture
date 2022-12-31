@@ -1,10 +1,9 @@
 package api
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/ehsandavari/golang-clean-architecture/presentation"
+	"github.com/ehsandavari/golang-clean-architecture/presentation/common"
 	"go.uber.org/fx"
-	"golangCodeBase/presentation"
-	"golangCodeBase/presentation/common"
 )
 
 func init() {

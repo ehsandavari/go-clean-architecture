@@ -1,9 +1,9 @@
 package persistence
 
 import (
-	"golangCodeBase/application/common/interfaces"
-	"golangCodeBase/domain/entities"
-	"golangCodeBase/infrastructure/postgres/models"
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
 )
 
 type sOrderRepository struct {

@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/mehdihadeli/go-mediatr"
+	"github.com/ehsandavari/golang-clean-architecture/application"
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
 	"go.uber.org/fx"
-	"golangCodeBase/application"
-	"golangCodeBase/application/common/interfaces"
-	"golangCodeBase/domain/entities"
-	"golangCodeBase/infrastructure/config"
 )
 
 func init() {
@@ -19,7 +18,7 @@ func init() {
 		iUnitOfWork interfaces.IUnitOfWork,
 		iRedis interfaces.IRedis,
 	) {
-		if err := mediatr.RegisterRequestHandler[SSubscribeOrderCommand, string](
+		if err := mediator.RegisterRequestHandler[SSubscribeOrderCommand, string](
 			NewSubscribeOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
 		); err != nil {
 			panic(err)

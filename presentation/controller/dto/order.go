@@ -1,6 +1,6 @@
 package dto
 
-import DomainEntities "golangCodeBase/domain/entities"
+import DomainEntities "github.com/ehsandavari/golang-clean-architecture/domain/entities"
 
 type CreateOrderRequest struct {
 	Id    uint64 `json:"order_id"`

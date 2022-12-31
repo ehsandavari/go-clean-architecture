@@ -1,10 +1,10 @@
 package logger
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/enums"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"go.uber.org/fx"
-	"golangCodeBase/application/common/interfaces"
-	"golangCodeBase/domain/enums"
-	"golangCodeBase/infrastructure"
 	"os"
 	"time"
 

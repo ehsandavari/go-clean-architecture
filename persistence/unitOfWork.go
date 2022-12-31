@@ -1,9 +1,9 @@
 package persistence
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
 	"go.uber.org/fx"
-	"golangCodeBase/application/common/interfaces"
-	"golangCodeBase/infrastructure/postgres"
 )
 
 func init() {

@@ -1,12 +1,12 @@
 package config
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/logger"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/redis"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
-	"golangCodeBase/infrastructure"
-	"golangCodeBase/infrastructure/logger"
-	"golangCodeBase/infrastructure/postgres"
-	"golangCodeBase/infrastructure/redis"
 	"os"
 )
 

@@ -2,10 +2,9 @@ package redis
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
+	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"go.uber.org/fx"
-	ApplicationInterfaces "golangCodeBase/application/common/interfaces"
-	"golangCodeBase/infrastructure"
 	"log"
 )
 

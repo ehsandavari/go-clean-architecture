@@ -1,7 +1,7 @@
 package persistence
 
 import (
-	"golangCodeBase/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 )
 
 type IDataModel[TE entities.IEntityConstraint] interface {

@@ -1,7 +1,7 @@
 package models
 
 import (
-	"golangCodeBase/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 )
 
 type OrderModel struct {

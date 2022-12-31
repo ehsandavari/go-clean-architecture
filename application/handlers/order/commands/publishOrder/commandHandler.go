@@ -3,13 +3,13 @@ package publishOrder
 import (
 	"context"
 	"fmt"
-	"github.com/mehdihadeli/go-mediatr"
+	"github.com/ehsandavari/go-mediator"
+	"github.com/ehsandavari/golang-clean-architecture/application"
+	"github.com/ehsandavari/golang-clean-architecture/application/common"
+	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
 	"go.uber.org/fx"
-	"golangCodeBase/application"
-	"golangCodeBase/application/common"
-	ApplicationInterfaces "golangCodeBase/application/common/interfaces"
-	"golangCodeBase/domain/entities"
-	"golangCodeBase/infrastructure/config"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
 		iRedis ApplicationInterfaces.IRedis,
 	) {
-		if err := mediatr.RegisterRequestHandler[SPublishOrderCommand, string](
+		if err := mediator.RegisterRequestHandler[SPublishOrderCommand, string](
 			NewPublishOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
 		); err != nil {
 			panic(err)

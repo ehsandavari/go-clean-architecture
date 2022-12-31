@@ -5,8 +5,8 @@
 package mocks
 
 import (
-	interfaces "golangCodeBase/application/common/interfaces"
-	entities "golangCodeBase/domain/entities"
+	interfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	entities "github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

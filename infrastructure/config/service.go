@@ -1,7 +1,7 @@
 package config
 
 import (
-	"golangCodeBase/infrastructure/logger"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/logger"
 )
 
 type SService struct {

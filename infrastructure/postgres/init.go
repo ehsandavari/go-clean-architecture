@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
 	"go.uber.org/fx"
-	"golangCodeBase/infrastructure"
-	"golangCodeBase/infrastructure/postgres/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"

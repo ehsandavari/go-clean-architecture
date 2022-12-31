@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"github.com/ehsandavari/golang-clean-architecture/application"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
+	"github.com/ehsandavari/golang-clean-architecture/persistence"
+	"github.com/ehsandavari/golang-clean-architecture/presentation"
+	"github.com/ehsandavari/golang-clean-architecture/presentation/api"
 	"go.uber.org/fx"
-	"golangCodeBase/application"
-	"golangCodeBase/infrastructure"
-	"golangCodeBase/persistence"
-	"golangCodeBase/presentation"
-	"golangCodeBase/presentation/api"
 )
 
 func main() {
