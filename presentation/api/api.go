@@ -1,27 +1,15 @@
 package api
 
-import (
-	"github.com/ehsandavari/golang-clean-architecture/presentation"
-	"github.com/ehsandavari/golang-clean-architecture/presentation/common"
-	"github.com/kataras/iris/v12"
-	"go.uber.org/fx"
-)
+import "net/http"
 
-func init() {
-	presentation.Modules = append(presentation.Modules, fx.Provide(NewApplication))
+type IHandler[TR any] interface {
+	ServeHTTP() TR
 }
 
-type SApplication struct {
+type AppError struct {
+	Error   error
+	Message string
+	Code    int
 }
 
-func NewApplication() *SApplication {
-	return &SApplication{}
-}
-
-func (r *SApplication) SetupAPI() {
-	irisApp := iris.Default()
-	irisApp.Use(common.ErrorHandlerMiddleware)
-	api := irisApp.Party("/api")
-	r.registerOrderAPI(api)
-	irisApp.Logger().Fatal(irisApp.Listen("127.0.0.1:9090"))
-}
+var HttpServers = map[string]*http.Server{}

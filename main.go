@@ -6,7 +6,6 @@ import (
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"github.com/ehsandavari/golang-clean-architecture/persistence"
 	"github.com/ehsandavari/golang-clean-architecture/presentation"
-	"github.com/ehsandavari/golang-clean-architecture/presentation/api"
 	"go.uber.org/fx"
 )
 
@@ -25,10 +24,10 @@ func run() {
 	).Run()
 }
 
-func serve(lc fx.Lifecycle, api *api.SApplication) {
+func serve(lc fx.Lifecycle) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go api.SetupAPI()
+			go presentation.Runner()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
