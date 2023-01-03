@@ -14,7 +14,7 @@ var HandlerEcho []IHandler[echo.HandlerFunc]
 func init() {
 	HandlerEcho = append(HandlerEcho, appHandlerEcho(handler_status_echo))
 	HttpServers["echo"] = &http.Server{
-		Addr:         ":8181",
+		Addr:         ":8080",
 		Handler:      newEcho(),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

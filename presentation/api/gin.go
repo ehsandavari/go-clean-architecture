@@ -1,7 +1,9 @@
 package api
 
 import (
-	"errors"
+	"github.com/ehsandavari/go-mediator"
+	"github.com/ehsandavari/golang-clean-architecture/application/handlers/order/commands/publishOrder"
+	"github.com/ehsandavari/golang-clean-architecture/presentation/controller/dto"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -10,9 +12,9 @@ import (
 var Handler []IHandler[gin.HandlerFunc]
 
 func init() {
-	Handler = append(Handler, appHandler(handler_status))
+	Handler = append(Handler, appHandler(order))
 	HttpServers["gin"] = &http.Server{
-		Addr:         ":8585",
+		Addr:         ":9090",
 		Handler:      newGin(),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -33,13 +35,26 @@ func (fn appHandler) ServeHTTP() gin.HandlerFunc {
 func newGin() http.Handler {
 	g := gin.Default()
 	for _, h := range Handler {
-		g.GET("/status", h.ServeHTTP())
+		g.POST("/order", h.ServeHTTP())
 	}
 	return g
 }
 
-func handler_status(c *gin.Context) AppError {
-	return AppError{
-		Error: errors.New("gin"),
+func order(ctx *gin.Context) AppError {
+	params := &dto.CreateOrderRequest{}
+	err := ctx.ShouldBindJSON(&params)
+	if err != nil {
+		return AppError{
+			Message: err.Error(),
+			Error:   err,
+		}
 	}
+	_, err = mediator.Send[publishOrder.SPublishOrderCommand, string](ctx, publishOrder.NewSPublishOrderCommand(params.Price, params.Title))
+	if err != nil {
+		return AppError{
+			Message: err.Error(),
+			Error:   err,
+		}
+	}
+	return AppError{}
 }
