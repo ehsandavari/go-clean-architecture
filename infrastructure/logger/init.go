@@ -2,9 +2,10 @@ package logger
 
 import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/ehsandavari/golang-clean-architecture/domain/enums"
+	"github.com/ehsandavari/golang-clean-architecture/domain/constants"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"go.uber.org/fx"
+	"log"
 	"os"
 	"time"
 
@@ -18,7 +19,7 @@ func init() {
 
 type sLogger struct {
 	level       string
-	devMode     bool
+	mode        string
 	encoding    string
 	sugarLogger *zap.SugaredLogger
 	logger      *zap.Logger
@@ -26,8 +27,8 @@ type sLogger struct {
 
 func NewLogger(config SConfig) interfaces.ILogger {
 	logger := &sLogger{
-		level:    config.LogLevel,
-		devMode:  config.DevMode,
+		level:    config.Level,
+		mode:     config.Mode,
 		encoding: config.Encoder,
 	}
 	logger.config(logger.getLoggerLevel())
@@ -35,19 +36,19 @@ func NewLogger(config SConfig) interfaces.ILogger {
 }
 
 var loggerLevelMap = map[string]zapcore.Level{
-	"Debug":  zapcore.DebugLevel,
-	"Info":   zapcore.InfoLevel,
-	"Warn":   zapcore.WarnLevel,
-	"Error":  zapcore.ErrorLevel,
-	"DPanic": zapcore.DPanicLevel,
-	"Panic":  zapcore.PanicLevel,
-	"Fatal":  zapcore.FatalLevel,
+	"debug":  zapcore.DebugLevel,
+	"info":   zapcore.InfoLevel,
+	"warn":   zapcore.WarnLevel,
+	"error":  zapcore.ErrorLevel,
+	"dPanic": zapcore.DPanicLevel,
+	"panic":  zapcore.PanicLevel,
+	"fatal":  zapcore.FatalLevel,
 }
 
 func (l *sLogger) getLoggerLevel() zapcore.Level {
 	level, exist := loggerLevelMap[l.level]
 	if !exist {
-		return zapcore.DebugLevel
+		log.Fatalln("logger level is not valid")
 	}
 	return level
 }
@@ -56,10 +57,12 @@ func (l *sLogger) config(logLevel zapcore.Level) {
 	logWriter := zapcore.AddSync(os.Stdout)
 
 	var encoderCfg zapcore.EncoderConfig
-	if l.devMode {
+	if l.mode == "development" {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
-	} else {
+	} else if l.mode == "production" {
 		encoderCfg = zap.NewProductionEncoderConfig()
+	} else {
+		log.Fatalln("logger mode is not valid")
 	}
 
 	encoderCfg.NameKey = "[SERVICE]"
@@ -78,10 +81,12 @@ func (l *sLogger) config(logLevel zapcore.Level) {
 		encoderCfg.EncodeCaller = zapcore.FullCallerEncoder
 		encoderCfg.ConsoleSeparator = " | "
 		encoder = zapcore.NewConsoleEncoder(encoderCfg)
-	} else {
+	} else if l.encoding == "json" {
 		encoderCfg.FunctionKey = "[CALLER]"
 		encoderCfg.EncodeName = zapcore.FullNameEncoder
 		encoder = zapcore.NewJSONEncoder(encoderCfg)
+	} else {
+		log.Fatalln("logger encoding is not valid")
 	}
 
 	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLevel))
@@ -184,89 +189,89 @@ func (l *sLogger) Fatalf(template string, args ...interface{}) {
 
 func (l *sLogger) HttpMiddlewareAccessLogger(method, uri string, status int, size int64, time time.Duration) {
 	l.logger.Info(
-		enums.HTTP,
-		zap.String(enums.METHOD, method),
-		zap.String(enums.URI, uri),
-		zap.Int(enums.STATUS, status),
-		zap.Int64(enums.SIZE, size),
-		zap.Duration(enums.TIME, time),
+		constants.Http,
+		zap.String(constants.Method, method),
+		zap.String(constants.Uri, uri),
+		zap.Int(constants.Status, status),
+		zap.Int64(constants.Size, size),
+		zap.Duration(constants.Time, time),
 	)
 }
 
 func (l *sLogger) GrpcMiddlewareAccessLogger(method string, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Info(
-		enums.GRPC,
-		zap.String(enums.METHOD, method),
-		zap.Duration(enums.TIME, time),
-		zap.Any(enums.METADATA, metaData),
-		zap.Any(enums.ERROR, err),
+		constants.Grpc,
+		zap.String(constants.Method, method),
+		zap.Duration(constants.Time, time),
+		zap.Any(constants.MetaData, metaData),
+		zap.Any(constants.Error, err),
 	)
 }
 
 func (l *sLogger) GrpcMiddlewareAccessLoggerErr(method string, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Error(
-		enums.GRPC,
-		zap.String(enums.METHOD, method),
-		zap.Duration(enums.TIME, time),
-		zap.Any(enums.METADATA, metaData),
-		zap.Any(enums.ERROR, err),
+		constants.Grpc,
+		zap.String(constants.Method, method),
+		zap.Duration(constants.Time, time),
+		zap.Any(constants.MetaData, metaData),
+		zap.Any(constants.Error, err),
 	)
 }
 
 func (l *sLogger) GrpcClientInterceptorLogger(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Info(
-		enums.GRPC,
-		zap.String(enums.METHOD, method),
-		zap.Any(enums.REQUEST, req),
-		zap.Any(enums.REPLY, reply),
-		zap.Duration(enums.TIME, time),
-		zap.Any(enums.METADATA, metaData),
-		zap.Any(enums.ERROR, err),
+		constants.Grpc,
+		zap.String(constants.Method, method),
+		zap.Any(constants.Request, req),
+		zap.Any(constants.Reply, reply),
+		zap.Duration(constants.Time, time),
+		zap.Any(constants.MetaData, metaData),
+		zap.Any(constants.Error, err),
 	)
 }
 
 func (l *sLogger) GrpcClientInterceptorLoggerErr(method string, req, reply interface{}, time time.Duration, metaData map[string][]string, err error) {
 	l.logger.Error(
-		enums.GRPC,
-		zap.String(enums.METHOD, method),
-		zap.Any(enums.REQUEST, req),
-		zap.Any(enums.REPLY, reply),
-		zap.Duration(enums.TIME, time),
-		zap.Any(enums.METADATA, metaData),
-		zap.Any(enums.ERROR, err),
+		constants.Grpc,
+		zap.String(constants.Method, method),
+		zap.Any(constants.Request, req),
+		zap.Any(constants.Reply, reply),
+		zap.Duration(constants.Time, time),
+		zap.Any(constants.MetaData, metaData),
+		zap.Any(constants.Error, err),
 	)
 }
 
 func (l *sLogger) KafkaProcessMessage(topic string, partition int, message []byte, workerID int, offset int64, time time.Time) {
 	l.logger.Debug(
 		"(Processing Kafka message)",
-		zap.String(enums.Topic, topic),
-		zap.Int(enums.Partition, partition),
-		zap.Int(enums.MessageSize, len(message)),
-		zap.Int(enums.WorkerID, workerID),
-		zap.Int64(enums.Offset, offset),
-		zap.Time(enums.Time, time),
+		zap.String(constants.Topic, topic),
+		zap.Int(constants.Partition, partition),
+		zap.Int(constants.MessageSize, len(message)),
+		zap.Int(constants.WorkerID, workerID),
+		zap.Int64(constants.Offset, offset),
+		zap.Time(constants.Time, time),
 	)
 }
 
 func (l *sLogger) KafkaLogCommittedMessage(topic string, partition int, offset int64) {
 	l.logger.Debug(
 		"(Committed Kafka message)",
-		zap.String(enums.Topic, topic),
-		zap.Int(enums.Partition, partition),
-		zap.Int64(enums.Offset, offset),
+		zap.String(constants.Topic, topic),
+		zap.Int(constants.Partition, partition),
+		zap.Int64(constants.Offset, offset),
 	)
 }
 
 func (l *sLogger) KafkaProcessMessageWithHeaders(topic string, partition int, message []byte, workerID int, offset int64, time time.Time, headers map[string]interface{}) {
 	l.logger.Debug(
 		"(Processing Kafka message)",
-		zap.String(enums.Topic, topic),
-		zap.Int(enums.Partition, partition),
-		zap.Int(enums.MessageSize, len(message)),
-		zap.Int(enums.WorkerID, workerID),
-		zap.Int64(enums.Offset, offset),
-		zap.Time(enums.Time, time),
-		zap.Any(enums.KafkaHeaders, headers),
+		zap.String(constants.Topic, topic),
+		zap.Int(constants.Partition, partition),
+		zap.Int(constants.MessageSize, len(message)),
+		zap.Int(constants.WorkerID, workerID),
+		zap.Int64(constants.Offset, offset),
+		zap.Time(constants.Time, time),
+		zap.Any(constants.KafkaHeaders, headers),
 	)
 }

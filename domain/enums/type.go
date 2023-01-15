@@ -1,6 +1,6 @@
 package enums
 
-//go:generate stringer -type=Type
+//go:generate stringer -type=Type -trimprefix=Type
 
 type Type byte
 

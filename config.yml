@@ -1,17 +1,17 @@
 service:
   id: 1
-  name: golangCodeBase
+  name: golang-clean-architecture
   version: 1.0.0
   logger:
     level: info
-    devMode: false
+    mode: development
     encoder: console
   grpc:
     port: :5001
     development: true
   http:
-    port: :5007
-    development: true
+    host: localhost
+    port: 5007
     basePath: /api/v1
     bankAccountsPath: /api/v1/accounts
     debugErrorsResponse: true

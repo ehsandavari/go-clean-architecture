@@ -1,6 +1,6 @@
 package redis
 
 type SConfig struct {
-	URL    string            `mapstructure:"url"`
-	Queues map[string]string `mapstructure:"queues"`
+	URL    string            `validate:"required"`
+	Queues map[string]string `validate:"required"`
 }

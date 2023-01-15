@@ -6,11 +6,20 @@ import (
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"github.com/ehsandavari/golang-clean-architecture/persistence"
 	"github.com/ehsandavari/golang-clean-architecture/presentation"
+	"github.com/joho/godotenv"
 	"go.uber.org/fx"
+	"log"
 )
 
 func main() {
+	loadEnv()
 	run()
+}
+
+func loadEnv() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalln("Error loading .env file", err)
+	}
 }
 
 func run() {
