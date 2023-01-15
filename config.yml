@@ -2,13 +2,6 @@ service:
   id: 1
   name: golang-clean-architecture
   version: 1.0.0
-  logger:
-    level: info
-    mode: development
-    encoder: console
-  grpc:
-    port: :5001
-    development: true
   http:
     host: localhost
     port: 5007
@@ -16,6 +9,13 @@ service:
     bankAccountsPath: /api/v1/accounts
     debugErrorsResponse: true
     ignoreLogUrls: [ "metrics", "swagger" ]
+  grpc:
+    port: :5001
+    development: true
+  logger:
+    level: info
+    mode: development
+    encoder: console
 
 postgres:
   url: host=localhost user=admin password=admin dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai
