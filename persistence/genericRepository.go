@@ -3,14 +3,15 @@ package persistence
 import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
 	"github.com/google/uuid"
 )
 
-type sGenericRepository[TD IDataModel[TE], TE entities.IEntityConstraint] struct {
+type sGenericRepository[TD models.IModel[TE], TE entities.IEntityConstraint] struct {
 	dataBaseContext *SDatabaseContext
 }
 
-func newGenericRepository[TD IDataModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
+func newGenericRepository[TD models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
 	return sGenericRepository[TD, TE]{
 		dataBaseContext: dataBaseContext,
 	}
@@ -29,10 +30,10 @@ func (r sGenericRepository[TD, TE]) Last() TE {
 }
 
 func (r sGenericRepository[TD, TE]) All() []TE {
-	var models []TD
-	r.dataBaseContext.Postgres.DB.Find(&models)
+	var modelsObject []TD
+	r.dataBaseContext.Postgres.DB.Find(&modelsObject)
 	var entitiesObject []TE
-	for _, model := range models {
+	for _, model := range modelsObject {
 		entitiesObject = append(entitiesObject, model.ToEntity())
 	}
 	return entitiesObject

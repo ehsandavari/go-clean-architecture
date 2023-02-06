@@ -6,14 +6,9 @@ import (
 	"time"
 )
 
-type Base struct {
-	ID        uuid.UUID `gorm:"type:uuid;index;"`
+type BaseModel[TId uint64 | uuid.UUID] struct {
+	ID        TId `gorm:"primaryKey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-}
-
-func (r *Base) BeforeCreate(*gorm.DB) (err error) {
-	r.ID = uuid.New()
-	return
 }
