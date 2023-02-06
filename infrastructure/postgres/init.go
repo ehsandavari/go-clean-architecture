@@ -39,6 +39,12 @@ func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 }
 
 func (r *SPostgres) setup() error {
+	if r.DB.Migrator().HasIndex(new(models.OrderModel), "idx_orders_id") {
+		err := r.DB.Migrator().DropIndex(new(models.OrderModel), "idx_orders_id")
+		if err != nil {
+			return err
+		}
+	}
 	return r.DB.AutoMigrate(
 		new(models.OrderModel),
 	)

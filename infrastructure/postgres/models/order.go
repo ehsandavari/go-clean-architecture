@@ -7,9 +7,10 @@ import (
 )
 
 type OrderModel struct {
-	BaseModel[uuid.UUID]
+	ID    uuid.UUID `gorm:"type:uuid;"`
 	Price uint
 	Title string
+	BaseModel
 }
 
 func (OrderModel) TableName() string {
