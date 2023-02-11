@@ -7,51 +7,48 @@ import (
 	"github.com/google/uuid"
 )
 
-type sGenericRepository[TD models.IModel[TE], TE entities.IEntityConstraint] struct {
+type sGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint] struct {
 	dataBaseContext *SDatabaseContext
 }
 
-func newGenericRepository[TD models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
-	return sGenericRepository[TD, TE]{
+func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
+	return sGenericRepository[TM, TE]{
 		dataBaseContext: dataBaseContext,
 	}
 }
 
-func (r sGenericRepository[TD, TE]) First() TE {
-	var model TD
+func (r sGenericRepository[TM, TE]) First() TE {
+	var model TM
 	r.dataBaseContext.Postgres.DB.First(&model)
 	return model.ToEntity()
 }
 
-func (r sGenericRepository[TD, TE]) Last() TE {
-	var model TD
+func (r sGenericRepository[TM, TE]) Last() TE {
+	var model TM
 	r.dataBaseContext.Postgres.DB.Last(&model)
 	return model.ToEntity()
 }
 
-func (r sGenericRepository[TD, TE]) All() []TE {
-	var modelsObject []TD
-	r.dataBaseContext.Postgres.DB.Find(&modelsObject)
+func (r sGenericRepository[TM, TE]) All() []TE {
+	var model TM
 	var entitiesObject []TE
-	for _, model := range modelsObject {
-		entitiesObject = append(entitiesObject, model.ToEntity())
-	}
+	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObject)
 	return entitiesObject
 }
 
-func (r sGenericRepository[TD, TE]) Add(entity TE) int64 {
-	var model TD
-	model = model.FromEntity(entity).(TD)
+func (r sGenericRepository[TM, TE]) Add(entity TE) int64 {
+	var model TM
+	model = model.FromEntity(entity).(TM)
 	return r.dataBaseContext.Postgres.DB.Create(&model).RowsAffected
 }
 
-func (r sGenericRepository[TD, TE]) Update(id uuid.UUID, entity TE) int64 {
-	var model TD
-	model = model.FromEntity(entity).(TD)
+func (r sGenericRepository[TM, TE]) Update(id uuid.UUID, entity TE) int64 {
+	var model TM
+	model = model.FromEntity(entity).(TM)
 	return r.dataBaseContext.Postgres.DB.Where("id", id).Updates(&model).RowsAffected
 }
 
-func (r sGenericRepository[TD, TE]) Delete(id uuid.UUID) int64 {
-	var model TD
+func (r sGenericRepository[TM, TE]) Delete(id uuid.UUID) int64 {
+	var model TM
 	return r.dataBaseContext.Postgres.DB.Delete(&model, id).RowsAffected
 }

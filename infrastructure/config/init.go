@@ -33,8 +33,8 @@ func NewConfig() (*SConfig, error) {
 	viper.SetConfigType("yml")
 	viper.AutomaticEnv()
 
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Println("Config file changed:", e.Name)
+	viper.OnConfigChange(func(event fsnotify.Event) {
+		log.Println("Config file changed:", event.String())
 	})
 	viper.WatchConfig()
 
