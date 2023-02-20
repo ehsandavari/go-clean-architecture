@@ -2,12 +2,10 @@ package publishOrder
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"github.com/ehsandavari/go-mediator"
 	"github.com/ehsandavari/golang-clean-architecture/application"
-	"github.com/ehsandavari/golang-clean-architecture/application/common"
 	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
 	"go.uber.org/fx"
 )
@@ -49,21 +47,21 @@ func NewPublishOrderCommandHandler(
 }
 
 func (r SPublishOrderCommandHandler) Handle(ctx context.Context, command SPublishOrderCommand) (string, error) {
-	f := r.iUnitOfWork.OrderRepository().First()
-	fmt.Println(f)
-	l := r.iUnitOfWork.OrderRepository().Last()
-	fmt.Println(l)
-	all := r.iUnitOfWork.OrderRepository().All()
-	fmt.Println(all)
-	a := r.iUnitOfWork.OrderRepository().Add(entities.NewOrderEntity(command.Price, command.Title))
-	fmt.Println(a)
-	u := r.iUnitOfWork.OrderRepository().Update(f.Id, entities.NewOrderEntity(command.Price+1, command.Title))
-	fmt.Println(u)
-	d := r.iUnitOfWork.OrderRepository().Delete(f.Id)
-	fmt.Println(d)
-	err := r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], common.MarshalJson(command))
-	if err != nil {
-		return "", err
-	}
-	return "", nil
+	//f := r.iUnitOfWork.OrderRepository().First()
+	//fmt.Println(f)
+	//l := r.iUnitOfWork.OrderRepository().Last()
+	//fmt.Println(l)
+	//all := r.iUnitOfWork.OrderRepository().All()
+	//fmt.Println(all)
+	//a := r.iUnitOfWork.OrderRepository().Add(entities.NewOrderEntity(command.Price, command.Title))
+	//fmt.Println(a)
+	//u := r.iUnitOfWork.OrderRepository().Update(f.Id, entities.NewOrderEntity(command.Price+1, command.Title))
+	//fmt.Println(u)
+	//d := r.iUnitOfWork.OrderRepository().Delete(f.Id)
+	//fmt.Println(d)
+	//err := r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], common.MarshalJson(command))
+	//if err != nil {
+	//	return "", err
+	//}
+	return "", errors.New("asd")
 }

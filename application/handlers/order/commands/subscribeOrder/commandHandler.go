@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/ehsandavari/go-mediator"
 	"github.com/ehsandavari/golang-clean-architecture/application"
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"

@@ -32,6 +32,7 @@ func (fn appHandler) ServeHTTP() gin.HandlerFunc {
 		c.JSON(200, gin.H{"status": "OK"})
 	}
 }
+
 func newGin() http.Handler {
 	g := gin.Default()
 	for _, h := range Handler {
