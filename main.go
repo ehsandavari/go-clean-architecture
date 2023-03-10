@@ -26,9 +26,9 @@ func loadEnv() {
 
 func run() {
 	var Modules []fx.Option
-	Modules = append(Modules, infrastructure.Modules...)
-	Modules = append(Modules, persistence.Modules...)
-	Modules = append(Modules, presentation.Modules...)
+	Modules = append(Modules, infrastructure.Modules)
+	Modules = append(Modules, persistence.Modules)
+	Modules = append(Modules, presentation.Modules)
 	Modules = append(Modules, application.Modules...)
 	fx.New(
 		append(Modules, fx.Invoke(serve))...,

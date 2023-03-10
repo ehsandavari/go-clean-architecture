@@ -3,8 +3,6 @@ package logger
 import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/constants"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
-	"go.uber.org/fx"
 	"log"
 	"os"
 	"time"
@@ -12,10 +10,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
-
-func init() {
-	infrastructure.Modules = append(infrastructure.Modules, fx.Provide(NewLogger))
-}
 
 type sLogger struct {
 	level       string

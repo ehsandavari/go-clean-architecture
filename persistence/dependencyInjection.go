@@ -4,4 +4,9 @@ import (
 	"go.uber.org/fx"
 )
 
-var Modules []fx.Option
+var Modules = fx.Module("persistence",
+	fx.Provide(
+		newDatabaseContext,
+		newUnitOfWork,
+	),
+)

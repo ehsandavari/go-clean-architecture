@@ -2,17 +2,12 @@ package postgres
 
 import (
 	"context"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 )
-
-func init() {
-	infrastructure.Modules = append(infrastructure.Modules, fx.Provide(NewPostgres))
-}
 
 type SPostgres struct {
 	*gorm.DB

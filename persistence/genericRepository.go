@@ -1,10 +1,13 @@
 package persistence
 
 import (
+	"fmt"
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
+	"github.com/ehsandavari/golang-clean-architecture/presentation/common"
 	"github.com/google/uuid"
+	"strings"
 )
 
 type sGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint] struct {
@@ -15,6 +18,44 @@ func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](d
 	return sGenericRepository[TM, TE]{
 		dataBaseContext: dataBaseContext,
 	}
+}
+
+func (r sGenericRepository[TM, TE]) Paginate(listQuery *common.ListQuery) (*common.ListResult[TE], error) {
+	var model TM
+	var totalRows int64
+	r.dataBaseContext.Postgres.Model(model).Count(&totalRows)
+	query := r.dataBaseContext.Postgres.Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
+	if listQuery.Filters != nil {
+		for _, filter := range listQuery.Filters {
+			column := filter.Field
+			action := filter.Comparison
+			value := filter.Value
+
+			switch action {
+			case "equals":
+				whereQuery := fmt.Sprintf("%s = ?", column)
+				query = query.Where(whereQuery, value)
+				break
+			case "contains":
+				whereQuery := fmt.Sprintf("%s LIKE ?", column)
+				query = query.Where(whereQuery, "%"+value+"%")
+				break
+			case "in":
+				whereQuery := fmt.Sprintf("%s IN (?)", column)
+				queryArray := strings.Split(value, ",")
+				query = query.Where(whereQuery, queryArray)
+				break
+
+			}
+		}
+	}
+
+	var entitiesObjects []TE
+	if err := query.Find(&entitiesObjects).Error; err != nil {
+		return nil, err
+	}
+
+	return common.NewListResult[TE](entitiesObjects, listQuery.GetSize(), listQuery.GetPage(), totalRows), nil
 }
 
 func (r sGenericRepository[TM, TE]) First() TE {
@@ -31,9 +72,9 @@ func (r sGenericRepository[TM, TE]) Last() TE {
 
 func (r sGenericRepository[TM, TE]) All() []TE {
 	var model TM
-	var entitiesObject []TE
-	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObject)
-	return entitiesObject
+	var entitiesObjects []TE
+	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObjects)
+	return entitiesObjects
 }
 
 func (r sGenericRepository[TM, TE]) Add(entity TE) int64 {

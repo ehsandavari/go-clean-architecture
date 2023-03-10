@@ -1,25 +1,13 @@
 package config
 
 import (
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure/logger"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/redis"
 	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"go.uber.org/fx"
 	"log"
 )
-
-func init() {
-	infrastructure.Modules = append(infrastructure.Modules,
-		fx.Provide(NewConfig),
-		fx.Provide(func(config *SConfig) (logger.SConfig, postgres.SConfig, redis.SConfig) {
-			return config.Service.Logger, config.Postgres, config.Redis
-		}),
-	)
-}
 
 type SConfig struct {
 	Service  SService         `validate:"required"`

@@ -3,19 +3,14 @@ package persistence
 import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
-	"go.uber.org/fx"
 )
-
-func init() {
-	Modules = append(Modules, fx.Provide(NewUnitOfWork))
-}
 
 type sUnitOfWork struct {
 	databaseContext *SDatabaseContext
 	orderRepository interfaces.IOrderRepository
 }
 
-func NewUnitOfWork(databaseContext *SDatabaseContext) interfaces.IUnitOfWork {
+func newUnitOfWork(databaseContext *SDatabaseContext) interfaces.IUnitOfWork {
 	return &sUnitOfWork{
 		databaseContext: databaseContext,
 		orderRepository: newOrderRepository(databaseContext),

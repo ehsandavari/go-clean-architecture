@@ -4,4 +4,4 @@ import (
 	"go.uber.org/fx"
 )
 
-var Modules []fx.Option
+var Modules = fx.Module("presentation")
