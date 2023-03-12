@@ -9,8 +9,11 @@ import (
 )
 
 var Modules = fx.Module("infrastructure",
-	fx.Invoke(
+	fx.Provide(
 		config.NewConfig,
+		func(config *config.SConfig) (logger.SConfig, postgres.SConfig, redis.SConfig) {
+			return config.Service.Logger, config.Postgres, config.Redis
+		},
 		logger.NewLogger,
 		postgres.NewPostgres,
 		redis.NewRedis,

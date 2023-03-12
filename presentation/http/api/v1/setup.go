@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/application/common"
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/presentation/http/api/v1/controllers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -9,7 +11,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-//go:generate swag i -g setup.go -o ../docs -ot go --instanceName v1
+//go:generate swag i -g setup.go -o ../docs -ot go --instanceName v1 --parseDependency
 
 //	@title			Golang Clean Architecture
 //	@version		1.0
@@ -25,7 +27,7 @@ func Setup(engine *gin.Engine, logger interfaces.ILogger) {
 	engine.Use(cors.Default())
 	setupSwagger(engine)
 	controller := controllers.NewController(logger)
-	engine.GET("/api/v1", controllers.AppController(controller.GetMap).Handler())
+	engine.POST("/api/v1", controllers.AppController[*common.PaginateResult[entities.OrderEntity]](controller.GetMap).Handler())
 }
 
 func setupSwagger(engine *gin.Engine) {

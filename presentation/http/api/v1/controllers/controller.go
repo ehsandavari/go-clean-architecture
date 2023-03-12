@@ -15,23 +15,24 @@ func NewController(logger interfaces.ILogger) Controller {
 	}
 }
 
-type BaseApiResponse struct {
-	Error    error  `json:"error"`
+type BaseApiResponse[TD any] struct {
+	err      error
+	httpCode int
 	Message  string `json:"message"`
 	Code     int    `json:"code"`
-	httpCode int
+	Data     TD     `json:"data" extensions:"x-nullable"`
 } //@name BaseApiResponse
 
-func NewBaseApiResponse(error error, message string, code int, httpCode int) BaseApiResponse {
-	return BaseApiResponse{Error: error, Message: message, Code: code, httpCode: httpCode}
+func NewBaseApiResponse[TD any](error error, message string, code int, data TD, httpCode int) BaseApiResponse[TD] {
+	return BaseApiResponse[TD]{err: error, Message: message, Code: code, Data: data, httpCode: httpCode}
 }
 
-type AppController func(ctx *gin.Context) BaseApiResponse
+type AppController[TD any] func(ctx *gin.Context) BaseApiResponse[TD]
 
-func (r AppController) Handler() gin.HandlerFunc {
+func (r AppController[TD]) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		response := r(c)
-		if response.Error != nil {
+		if response.err != nil {
 			c.JSON(response.httpCode, response)
 			return
 		}

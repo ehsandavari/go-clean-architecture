@@ -1,4 +1,4 @@
-package publishOrder
+package GetAllOrderByFilter
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"github.com/ehsandavari/golang-clean-architecture/application"
 	"github.com/ehsandavari/golang-clean-architecture/application/common"
 	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
 	"go.uber.org/fx"
 )
@@ -15,41 +16,37 @@ func init() {
 		sConfig *config.SConfig,
 		iLogger ApplicationInterfaces.ILogger,
 		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
-		iRedis ApplicationInterfaces.IRedis,
 	) {
-		if err := mediator.RegisterRequestHandler[SPublishOrderCommand, string](
-			newPublishOrderCommandHandler(sConfig, iLogger, iUnitOfWork, iRedis),
+		if err := mediator.RegisterRequestHandler[SGetAllOrderByFilterQuery, *common.PaginateResult[entities.OrderEntity]](
+			newGetAllOrderByFilterQueryHandler(sConfig, iLogger, iUnitOfWork),
 		); err != nil {
 			panic(err)
 		}
 	}))
 }
 
-type SPublishOrderCommandHandler struct {
+type SGetAllOrderByFilterQueryHandler struct {
 	sConfig     *config.SConfig
 	iLogger     ApplicationInterfaces.ILogger
 	iUnitOfWork ApplicationInterfaces.IUnitOfWork
-	iRedis      ApplicationInterfaces.IRedis
 }
 
-func newPublishOrderCommandHandler(
+func newGetAllOrderByFilterQueryHandler(
 	sConfig *config.SConfig,
 	iLogger ApplicationInterfaces.ILogger,
 	iUnitOfWork ApplicationInterfaces.IUnitOfWork,
-	iRedis ApplicationInterfaces.IRedis,
-) SPublishOrderCommandHandler {
-	return SPublishOrderCommandHandler{
+) SGetAllOrderByFilterQueryHandler {
+	return SGetAllOrderByFilterQueryHandler{
 		sConfig:     sConfig,
 		iLogger:     iLogger,
 		iUnitOfWork: iUnitOfWork,
-		iRedis:      iRedis,
 	}
 }
 
-func (r SPublishOrderCommandHandler) Handle(ctx context.Context, command SPublishOrderCommand) (string, error) {
-	err := r.iRedis.Publish(ctx, r.sConfig.Redis.Queues["Orders"], common.MarshalJson(command))
+func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.OrderEntity], error) {
+	paginate, err := r.iUnitOfWork.OrderRepository().Paginate(Query.PaginateQuery)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return "", nil
+	return paginate, nil
 }

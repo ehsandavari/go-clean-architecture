@@ -3,7 +3,6 @@ module github.com/ehsandavari/golang-clean-architecture
 go 1.19
 
 require (
-	github.com/appleboy/gin-jwt/v2 v2.9.1
 	github.com/ehsandavari/go-mediator v1.0.1
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gin-contrib/cors v1.4.0
@@ -17,7 +16,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.3
-	github.com/swaggo/swag v1.8.1
+	github.com/swaggo/swag v1.8.10
 	go.uber.org/fx v1.18.2
 	go.uber.org/zap v1.24.0
 	gorm.io/driver/postgres v1.4.5
@@ -41,7 +40,6 @@ require (
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/goccy/go-reflect v1.2.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect

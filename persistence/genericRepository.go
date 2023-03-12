@@ -2,10 +2,10 @@ package persistence
 
 import (
 	"fmt"
+	"github.com/ehsandavari/golang-clean-architecture/application/common"
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
-	"github.com/ehsandavari/golang-clean-architecture/presentation/common"
 	"github.com/google/uuid"
 	"strings"
 )
@@ -20,14 +20,14 @@ func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](d
 	}
 }
 
-func (r sGenericRepository[TM, TE]) Paginate(listQuery *common.ListQuery) (*common.ListResult[TE], error) {
+func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*common.PaginateResult[TE], error) {
 	var model TM
 	var totalRows int64
 	r.dataBaseContext.Postgres.Model(model).Count(&totalRows)
-	query := r.dataBaseContext.Postgres.Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
+	query := r.dataBaseContext.Postgres.Model(model).Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
 	if listQuery.Filters != nil {
 		for _, filter := range listQuery.Filters {
-			column := filter.Field
+			column := filter.Key
 			action := filter.Comparison
 			value := filter.Value
 
@@ -55,7 +55,14 @@ func (r sGenericRepository[TM, TE]) Paginate(listQuery *common.ListQuery) (*comm
 		return nil, err
 	}
 
-	return common.NewListResult[TE](entitiesObjects, listQuery.GetSize(), listQuery.GetPage(), totalRows), nil
+	return common.NewPaginateResult[TE](entitiesObjects, listQuery.GetPage(), listQuery.GetPerPage(), totalRows), nil
+}
+
+func (r sGenericRepository[TM, TE]) All() []TE {
+	var model TM
+	var entitiesObjects []TE
+	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObjects)
+	return entitiesObjects
 }
 
 func (r sGenericRepository[TM, TE]) First() TE {
@@ -68,13 +75,6 @@ func (r sGenericRepository[TM, TE]) Last() TE {
 	var model TM
 	r.dataBaseContext.Postgres.DB.Last(&model)
 	return model.ToEntity()
-}
-
-func (r sGenericRepository[TM, TE]) All() []TE {
-	var model TM
-	var entitiesObjects []TE
-	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObjects)
-	return entitiesObjects
 }
 
 func (r sGenericRepository[TM, TE]) Add(entity TE) int64 {
