@@ -38,7 +38,8 @@ func run() {
 func serve(lc fx.Lifecycle, logger interfaces.ILogger) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			return api.Setup(logger)
+			go api.Setup(logger)
+			return nil
 		},
 		OnStop: func(ctx context.Context) error {
 			return nil

@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func Setup(logger interfaces.ILogger) error {
+func Setup(logger interfaces.ILogger) {
 	engine := gin.Default()
 	engine.Use(cors.Default())
 	monitoringRouterGroup := engine.Group("/-")
@@ -25,5 +25,7 @@ func Setup(logger interfaces.ILogger) error {
 	{
 		v1.Setup(apiRouterGroup, logger)
 	}
-	return engine.Run()
+	if err := engine.Run(); err != nil {
+		logger.Fatal(err)
+	}
 }
