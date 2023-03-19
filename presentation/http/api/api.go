@@ -14,9 +14,9 @@ func Setup(logger interfaces.ILogger) {
 	engine := gin.Default()
 	monitoringRouterGroup := engine.Group("/-")
 	{
-		monitoringRouterGroup.GET("/health", func(c *gin.Context) { c.Status(http.StatusOK) })
-		monitoringRouterGroup.GET("/liveness", func(c *gin.Context) { c.Status(http.StatusOK) })
-		monitoringRouterGroup.GET("/readyness", func(c *gin.Context) { c.Status(http.StatusOK) })
+		monitoringRouterGroup.GET("/health", func(ctx *gin.Context) { ctx.Status(http.StatusOK) })
+		monitoringRouterGroup.GET("/liveness", func(ctx *gin.Context) { ctx.Status(http.StatusOK) })
+		monitoringRouterGroup.GET("/readyness", func(ctx *gin.Context) { ctx.Status(http.StatusOK) })
 	}
 	v1.Setup(engine, logger)
 	if err := engine.Run(); err != nil {
