@@ -3,15 +3,10 @@ package redis
 import (
 	"context"
 	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure"
 	"github.com/go-redis/redis/v9"
 	"go.uber.org/fx"
 	"log"
 )
-
-func init() {
-	infrastructure.Modules = append(infrastructure.Modules, fx.Provide(NewRedis))
-}
 
 type SRedis struct {
 	Client *redis.Client

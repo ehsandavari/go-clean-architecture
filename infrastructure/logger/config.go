@@ -1,7 +1,7 @@
 package logger
 
 type SConfig struct {
-	LogLevel string `mapstructure:"level"`
-	DevMode  bool   `mapstructure:"devMode"`
-	Encoder  string `mapstructure:"encoder"`
+	Level   string `validate:"required"`
+	Mode    string `validate:"required"`
+	Encoder string `validate:"required"`
 }

@@ -2,16 +2,24 @@ package models
 
 import (
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type OrderModel struct {
-	Base
+	ID    uuid.UUID `gorm:"type:uuid;"`
 	Price uint
 	Title string
+	BaseModel
 }
 
 func (OrderModel) TableName() string {
 	return "orders"
+}
+
+func (r *OrderModel) BeforeCreate(*gorm.DB) error {
+	r.ID = uuid.New()
+	return nil
 }
 
 func (r OrderModel) ToEntity() entities.OrderEntity {
