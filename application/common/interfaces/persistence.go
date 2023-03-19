@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//go:generate mockgen -destination=../../mocks/mockPersistence.go -package=mocks golangCodeBase/application/common/interfaces IUnitOfWork,IOrderRepository
+//go:generate mockgen -destination=../../mocks/mockPersistence.go -package=mocks github.com/ehsandavari/golang-clean-architecture/application/common/interfaces IUnitOfWork
 
 type (
 	IGenericRepository[TE entities.IEntityConstraint] interface {

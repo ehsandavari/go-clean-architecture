@@ -43,9 +43,9 @@ func (r ComparisonType) String() string {
 }
 
 type FilterQuery struct {
-	Key        string         `json:"key"`
-	Comparison ComparisonType `json:"comparison" enums:"in,equals,contains"`
-	Value      string         `json:"value"`
+	Key        string         `json:"key" validate:"required"`
+	Comparison ComparisonType `json:"comparison" validate:"required" enums:"in,equals,contains"`
+	Value      string         `json:"value" validate:"optional"`
 } //@name FilterQuery
 
 type PaginateQuery struct {

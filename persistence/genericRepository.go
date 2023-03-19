@@ -35,17 +35,13 @@ func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*c
 			case "equals":
 				whereQuery := fmt.Sprintf("%s = ?", column)
 				query = query.Where(whereQuery, value)
-				break
 			case "contains":
 				whereQuery := fmt.Sprintf("%s LIKE ?", column)
 				query = query.Where(whereQuery, "%"+value+"%")
-				break
 			case "in":
 				whereQuery := fmt.Sprintf("%s IN (?)", column)
 				queryArray := strings.Split(value, ",")
 				query = query.Where(whereQuery, queryArray)
-				break
-
 			}
 		}
 	}
