@@ -18,6 +18,7 @@ func NewOrderController(routerGroup *gin.RouterGroup, logger interfaces.ILogger)
 	orderController := sOrderController{
 		sBaseController: newBaseController(logger),
 	}
+
 	routerGroup = routerGroup.Group("/order")
 	{
 		routerGroup.POST("/all", baseController[*common.PaginateResult[entities.OrderEntity]](orderController.all).Handle())
