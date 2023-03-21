@@ -6,6 +6,7 @@ import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/application/handlers/order/queries/GetAllOrderByFilter"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,8 +34,9 @@ func NewOrderController(routerGroup *gin.RouterGroup, logger interfaces.ILogger)
 //	@ID				get-map
 //	@Accept			json
 //	@Produce		json
-//	@Param			params	body		GetAllOrderRequest	false	"Query Params"
-//	@Success		200		{object}	BaseApiResponse[common.PaginateResult[entities.OrderEntity]]
+//	@Param			Accept-Language	header		string				false	"some description"	Enums(en, fa)
+//	@Param			params			body		GetAllOrderRequest	false	"Query Params"
+//	@Success		200				{object}	BaseApiResponse[common.PaginateResult[entities.OrderEntity]]
 //	@Router			/order/all [POST]
 func (r *sOrderController) all(ctx *gin.Context) BaseApiResponse[*common.PaginateResult[entities.OrderEntity]] {
 	var paginateQuery common.PaginateQuery
@@ -53,7 +55,7 @@ func (r *sOrderController) all(ctx *gin.Context) BaseApiResponse[*common.Paginat
 	if err != nil {
 		return newBaseApiResponse[*common.PaginateResult[entities.OrderEntity]](
 			err,
-			err.Error(),
+			i18n.MustGetMessage("Order."+err.Error()),
 			22,
 			nil,
 			http.StatusBadRequest,
