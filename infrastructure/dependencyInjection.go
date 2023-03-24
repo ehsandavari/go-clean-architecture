@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/logger"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
@@ -11,11 +12,10 @@ import (
 var Modules = fx.Module("infrastructure",
 	fx.Provide(
 		config.NewConfig,
-		func(config *config.SConfig) (logger.SConfig, postgres.SConfig, redis.SConfig) {
-			return config.Service.Logger, config.Postgres, config.Redis
+		func(lc fx.Lifecycle, config *config.SConfig) (interfaces.ILogger, *postgres.SPostgres, interfaces.IRedis) {
+			return logger.NewLogger(config.Service.Logger),
+				postgres.NewPostgres(lc, config.Postgres),
+				redis.NewRedis(lc, config.Redis)
 		},
-		logger.NewLogger,
-		postgres.NewPostgres,
-		redis.NewRedis,
 	),
 )

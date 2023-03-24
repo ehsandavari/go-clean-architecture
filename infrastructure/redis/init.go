@@ -2,8 +2,8 @@ package redis
 
 import (
 	"context"
-	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/go-redis/redis/v9"
+	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/fx"
 	"log"
 )
@@ -12,7 +12,7 @@ type SRedis struct {
 	Client *redis.Client
 }
 
-func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {
+func NewRedis(lc fx.Lifecycle, config *SConfig) interfaces.IRedis {
 	sRedis := new(SRedis)
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -30,7 +30,7 @@ func NewRedis(lc fx.Lifecycle, config SConfig) ApplicationInterfaces.IRedis {
 	return sRedis
 }
 
-func (r SRedis) Publish(ctx context.Context, channelName string, message interface{}) error {
+func (r *SRedis) Publish(ctx context.Context, channelName string, message interface{}) error {
 	return r.Client.Publish(ctx, channelName, message).Err()
 }
 

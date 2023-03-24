@@ -10,9 +10,9 @@ import (
 )
 
 type SConfig struct {
-	Service  SService         `validate:"required"`
-	Postgres postgres.SConfig `validate:"required"`
-	Redis    redis.SConfig    `validate:"required"`
+	Service  *SService         `validate:"required"`
+	Postgres *postgres.SConfig `validate:"required"`
+	Redis    *redis.SConfig    `validate:"required"`
 }
 
 func NewConfig() (*SConfig, error) {
@@ -39,16 +39,4 @@ func NewConfig() (*SConfig, error) {
 		log.Fatalln(err.Error())
 	}
 	return config, nil
-}
-
-func (r SConfig) GetServiceId() uint16 {
-	return r.Service.Id
-}
-
-func (r SConfig) GetServiceName() string {
-	return r.Service.Name
-}
-
-func (r SConfig) GetServiceVersion() string {
-	return r.Service.Version
 }
