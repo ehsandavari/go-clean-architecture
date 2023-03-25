@@ -28,9 +28,8 @@ func NewOrderController(routerGroup *gin.RouterGroup, logger interfaces.ILogger)
 
 // GetOrders
 //
-//	@Tag			order
-//	@Summary		Get Map Order
-//	@Description	get map
+//	@Tags			order
+//	@Summary		Get All Order
 //	@ID				get-map
 //	@Accept			json
 //	@Produce		json
