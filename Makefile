@@ -13,7 +13,7 @@ swagger: ### init swagger
 .PHONY: swagger
 
 linter-golangci: ### check by golangci linter
-	golangci-lint run
+	golangci-lint run ./...
 .PHONY: linter-golangci
 
 test: ### run unit-test and integration-test

@@ -2,12 +2,12 @@ package entities
 
 import "github.com/google/uuid"
 
-type OrderEntity struct {
+type Order struct {
 	Id    uuid.UUID
 	Price uint
 	Title string
-} //@name OrderEntity
+} //@name Order
 
-func NewOrderEntity(price uint, title string) OrderEntity {
-	return OrderEntity{Price: price, Title: title}
+func NewOrder(price uint, title string) Order {
+	return Order{Price: price, Title: title}
 }
