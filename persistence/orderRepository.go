@@ -6,17 +6,17 @@ import (
 )
 
 type sOrderRepository struct {
-	sGenericRepository[models.OrderModel, entities.OrderEntity]
+	sGenericRepository[models.Order, entities.Order]
 }
 
 func newOrderRepository(db *SDatabaseContext) sOrderRepository {
 	return sOrderRepository{
-		sGenericRepository: newGenericRepository[models.OrderModel, entities.OrderEntity](db),
+		sGenericRepository: newGenericRepository[models.Order, entities.Order](db),
 	}
 }
 
-func (r sOrderRepository) FindById() entities.OrderEntity {
-	var entitiesObjects entities.OrderEntity
-	r.Postgres.DB.Model(new(models.OrderModel)).First(&entitiesObjects)
+func (r sOrderRepository) FindById() entities.Order {
+	var entitiesObjects entities.Order
+	r.Postgres.DB.Model(new(models.Order)).First(&entitiesObjects)
 	return entitiesObjects
 }
