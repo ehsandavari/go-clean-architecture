@@ -19,7 +19,7 @@ type (
 		Delete(id uuid.UUID) int64
 	}
 	IOrderRepository interface {
-		IGenericRepository[entities.OrderEntity]
+		IGenericRepository[entities.Order]
 	}
 	IUnitOfWork interface {
 		OrderRepository() IOrderRepository

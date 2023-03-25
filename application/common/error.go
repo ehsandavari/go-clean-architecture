@@ -1,13 +1,18 @@
 package common
 
-//go:generate stringer -type=Error -trimprefix=Error
+//go:generate stringer -type=tError -trimprefix=Error -output=error_string.go
 
-type Error byte
+type tError uint
 
-func (r Error) Error() string {
+func (r tError) Error() string {
 	return r.String()
 }
 
+func (r tError) Code() uint {
+	return uint(r)
+}
+
 const (
-	ErrorOrderNotFound Error = iota + 1
+	ErrorInternal tError = iota + 1000
+	ErrorOrderNotFound
 )

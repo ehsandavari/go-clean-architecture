@@ -17,7 +17,7 @@ func init() {
 		iLogger ApplicationInterfaces.ILogger,
 		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
 	) {
-		if err := mediator.RegisterRequestHandler[SGetAllOrderByFilterQuery, *common.PaginateResult[entities.OrderEntity]](
+		if err := mediator.RegisterRequestHandler[SGetAllOrderByFilterQuery, *common.PaginateResult[entities.Order]](
 			newGetAllOrderByFilterQueryHandler(sConfig, iLogger, iUnitOfWork),
 		); err != nil {
 			panic(err)
@@ -43,7 +43,7 @@ func newGetAllOrderByFilterQueryHandler(
 	}
 }
 
-func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.OrderEntity], error) {
+func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.Order], mediator.IError) {
 	paginate, err := r.iUnitOfWork.OrderRepository().Paginate(Query.PaginateQuery)
 	if err != nil {
 		return nil, common.ErrorOrderNotFound
