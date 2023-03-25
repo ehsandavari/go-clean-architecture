@@ -3,7 +3,6 @@ package persistence
 import (
 	"fmt"
 	"github.com/ehsandavari/golang-clean-architecture/application/common"
-	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
 	"github.com/google/uuid"
@@ -11,20 +10,20 @@ import (
 )
 
 type sGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint] struct {
-	dataBaseContext *SDatabaseContext
+	*SDatabaseContext
 }
 
-func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) interfaces.IGenericRepository[TE] {
+func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) sGenericRepository[TM, TE] {
 	return sGenericRepository[TM, TE]{
-		dataBaseContext: dataBaseContext,
+		SDatabaseContext: dataBaseContext,
 	}
 }
 
 func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*common.PaginateResult[TE], error) {
 	var model TM
 	var totalRows int64
-	r.dataBaseContext.Postgres.Model(model).Count(&totalRows)
-	query := r.dataBaseContext.Postgres.Model(model).Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
+	r.Postgres.Model(model).Count(&totalRows)
+	query := r.Postgres.Model(model).Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
 	if listQuery.Filters != nil {
 		for _, filter := range listQuery.Filters {
 			column := filter.Key
@@ -57,35 +56,35 @@ func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*c
 func (r sGenericRepository[TM, TE]) All() []TE {
 	var model TM
 	var entitiesObjects []TE
-	r.dataBaseContext.Postgres.DB.Model(model).Find(&entitiesObjects)
+	r.Postgres.DB.Model(model).Find(&entitiesObjects)
 	return entitiesObjects
 }
 
 func (r sGenericRepository[TM, TE]) First() TE {
 	var model TM
-	r.dataBaseContext.Postgres.DB.First(&model)
+	r.Postgres.DB.First(&model)
 	return model.ToEntity()
 }
 
 func (r sGenericRepository[TM, TE]) Last() TE {
 	var model TM
-	r.dataBaseContext.Postgres.DB.Last(&model)
+	r.Postgres.DB.Last(&model)
 	return model.ToEntity()
 }
 
 func (r sGenericRepository[TM, TE]) Add(entity TE) int64 {
 	var model TM
 	model = model.FromEntity(entity).(TM)
-	return r.dataBaseContext.Postgres.DB.Create(&model).RowsAffected
+	return r.Postgres.DB.Create(&model).RowsAffected
 }
 
 func (r sGenericRepository[TM, TE]) Update(id uuid.UUID, entity TE) int64 {
 	var model TM
 	model = model.FromEntity(entity).(TM)
-	return r.dataBaseContext.Postgres.DB.Where("id", id).Updates(&model).RowsAffected
+	return r.Postgres.DB.Where("id", id).Updates(&model).RowsAffected
 }
 
 func (r sGenericRepository[TM, TE]) Delete(id uuid.UUID) int64 {
 	var model TM
-	return r.dataBaseContext.Postgres.DB.Delete(&model, id).RowsAffected
+	return r.Postgres.DB.Delete(&model, id).RowsAffected
 }
