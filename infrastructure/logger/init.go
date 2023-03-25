@@ -19,7 +19,7 @@ type sLogger struct {
 	logger      *zap.Logger
 }
 
-func NewLogger(config SConfig) interfaces.ILogger {
+func NewLogger(config *SConfig) interfaces.ILogger {
 	logger := &sLogger{
 		level:    config.Level,
 		mode:     config.Mode,

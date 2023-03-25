@@ -6,31 +6,31 @@ import (
 	"gorm.io/gorm"
 )
 
-type OrderModel struct {
+type Order struct {
 	ID    uuid.UUID `gorm:"type:uuid;"`
 	Price uint
 	Title string
 	BaseModel
 }
 
-func (OrderModel) TableName() string {
+func (Order) TableName() string {
 	return "orders"
 }
 
-func (r *OrderModel) BeforeCreate(*gorm.DB) error {
+func (r *Order) BeforeCreate(*gorm.DB) error {
 	r.ID = uuid.New()
 	return nil
 }
 
-func (r OrderModel) ToEntity() entities.OrderEntity {
-	return entities.OrderEntity{
+func (r Order) ToEntity() entities.Order {
+	return entities.Order{
 		Id:    r.ID,
 		Price: r.Price,
 		Title: r.Title,
 	}
 }
 
-func (r OrderModel) FromEntity(entity entities.OrderEntity) any {
+func (r Order) FromEntity(entity entities.Order) any {
 	r.ID = entity.Id
 	r.Price = entity.Price
 	r.Title = entity.Title

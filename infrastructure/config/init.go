@@ -3,16 +3,15 @@ package config
 import (
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/redis"
-	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"log"
 )
 
 type SConfig struct {
-	Service  SService         `validate:"required"`
-	Postgres postgres.SConfig `validate:"required"`
-	Redis    redis.SConfig    `validate:"required"`
+	Service  *SService         `validate:"required"`
+	Postgres *postgres.SConfig `validate:"required"`
+	Redis    *redis.SConfig    `validate:"required"`
 }
 
 func NewConfig() (*SConfig, error) {
@@ -20,11 +19,6 @@ func NewConfig() (*SConfig, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AutomaticEnv()
-
-	viper.OnConfigChange(func(event fsnotify.Event) {
-		log.Println("Config file changed:", event.String())
-	})
-	viper.WatchConfig()
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err
@@ -39,16 +33,4 @@ func NewConfig() (*SConfig, error) {
 		log.Fatalln(err.Error())
 	}
 	return config, nil
-}
-
-func (r SConfig) GetServiceId() uint16 {
-	return r.Service.Id
-}
-
-func (r SConfig) GetServiceName() string {
-	return r.Service.Name
-}
-
-func (r SConfig) GetServiceVersion() string {
-	return r.Service.Version
 }

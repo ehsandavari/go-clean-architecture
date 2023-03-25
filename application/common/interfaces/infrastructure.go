@@ -8,9 +8,6 @@ import (
 //go:generate mockgen -destination=../../mocks/mockInferastructure.go -package=mocks golangCodeBase/application/common/interfaces IRedis,ILogger
 
 type (
-	IConfig interface {
-		Get() error
-	}
 	IRedis interface {
 		Publish(ctx context.Context, channelName string, message interface{}) error
 		Subscribe(ctx context.Context, channelName string) <-chan string

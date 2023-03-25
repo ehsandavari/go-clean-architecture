@@ -3,22 +3,22 @@ service:
   name: golang-clean-architecture
   version: 1.0.0
   http:
+    mode: debug # debug, release or test
     host: localhost
-    port: 5007
-    basePath: /api/v1
-    bankAccountsPath: /api/v1/accounts
-    debugErrorsResponse: true
-    ignoreLogUrls: [ "metrics", "swagger" ]
-  grpc:
-    port: :5001
-    development: true
+    port: 8080
   logger:
-    level: info
-    mode: development
-    encoder: console
+    level: info # debug, info, warn, error, dPanic, panic or fatal
+    mode: development # development or production
+    encoder: console # console or json
 
 postgres:
-  url: host=localhost user=admin password=admin dbname=gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  host: localhost
+  port: 5432
+  user: admin
+  password: admin
+  databaseName: gorm
+  sslMode: disable # enable or disable
+  timeZone: Asia/Tehran
 
 redis:
   url: localhost:6379

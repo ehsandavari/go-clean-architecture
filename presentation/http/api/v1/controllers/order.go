@@ -6,6 +6,7 @@ import (
 	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
 	"github.com/ehsandavari/golang-clean-architecture/application/handlers/order/queries/GetAllOrderByFilter"
 	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
+	"github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -21,46 +22,46 @@ func NewOrderController(routerGroup *gin.RouterGroup, logger interfaces.ILogger)
 
 	routerGroup = routerGroup.Group("/order")
 	{
-		routerGroup.POST("/all", baseController[*common.PaginateResult[entities.OrderEntity]](orderController.all).Handle())
+		routerGroup.POST("/all", baseController[*common.PaginateResult[entities.Order]](orderController.all).Handle())
 	}
 }
 
 // GetOrders
 //
-//	@Tag			order
-//	@Summary		Get Map Order
-//	@Description	get map
+//	@Tags			order
+//	@Summary		Get All Order
 //	@ID				get-map
 //	@Accept			json
 //	@Produce		json
-//	@Param			params	body		GetAllOrderRequest	false	"Query Params"
-//	@Success		200		{object}	BaseApiResponse[common.PaginateResult[entities.OrderEntity]]
+//	@Param			Accept-Language	header		string				false	"some description"	Enums(en, fa)
+//	@Param			params			body		GetAllOrderRequest	false	"Query Params"
+//	@Success		200				{object}	BaseApiResponse[common.PaginateResult[entities.Order]]
 //	@Router			/order/all [POST]
-func (r *sOrderController) all(ctx *gin.Context) BaseApiResponse[*common.PaginateResult[entities.OrderEntity]] {
+func (r *sOrderController) all(ctx *gin.Context) BaseApiResponse[*common.PaginateResult[entities.Order]] {
 	var paginateQuery common.PaginateQuery
 	if err := ctx.ShouldBindJSON(&paginateQuery); err != nil {
-		return newBaseApiResponse[*common.PaginateResult[entities.OrderEntity]](
+		return newBaseApiResponse[*common.PaginateResult[entities.Order]](
 			err,
 			err.Error(),
-			22,
+			1,
 			nil,
 			http.StatusBadRequest,
 		)
 	}
 	r.iLogger.Info("paginateQuery: ", paginateQuery)
 
-	list, err := mediator.Send[GetAllOrderByFilter.SGetAllOrderByFilterQuery, *common.PaginateResult[entities.OrderEntity]](ctx, GetAllOrderByFilter.NewSGetAllOrderByFilterQuery(paginateQuery))
+	list, err := mediator.Send[GetAllOrderByFilter.SGetAllOrderByFilterQuery, *common.PaginateResult[entities.Order]](ctx, GetAllOrderByFilter.NewSGetAllOrderByFilterQuery(paginateQuery))
 	if err != nil {
-		return newBaseApiResponse[*common.PaginateResult[entities.OrderEntity]](
+		return newBaseApiResponse[*common.PaginateResult[entities.Order]](
 			err,
-			err.Error(),
-			22,
+			i18n.MustGetMessage(err.Error()),
+			err.Code(),
 			nil,
 			http.StatusBadRequest,
 		)
 	}
 
-	return newBaseApiResponse[*common.PaginateResult[entities.OrderEntity]](
+	return newBaseApiResponse[*common.PaginateResult[entities.Order]](
 		nil,
 		"success",
 		200,

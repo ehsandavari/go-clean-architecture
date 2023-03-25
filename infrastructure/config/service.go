@@ -5,9 +5,9 @@ import (
 )
 
 type SService struct {
-	Id      uint16         `validate:"required"`
-	Name    string         `validate:"required"`
-	Version string         `validate:"required"`
-	Logger  logger.SConfig `validate:"required"`
-	//Grpc    logger.SConfig `validate:"required"`
+	Id      uint16          `validate:"required"`
+	Name    string          `validate:"required"`
+	Version string          `validate:"required"`
+	Http    Http            `validate:"required"`
+	Logger  *logger.SConfig `validate:"required"`
 }

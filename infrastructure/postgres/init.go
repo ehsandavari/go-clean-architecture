@@ -13,12 +13,13 @@ type SPostgres struct {
 	*gorm.DB
 }
 
-func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
+func NewPostgres(lc fx.Lifecycle, config *SConfig) *SPostgres {
 	sPostgres := new(SPostgres)
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			var err error
-			if sPostgres.DB, err = gorm.Open(postgres.Open(config.URL), &gorm.Config{}); err != nil {
+
+			if sPostgres.DB, err = gorm.Open(postgres.Open("host=" + config.Host + " user=" + config.User + " password=" + config.Password + " dbname=" + config.DatabaseName + " port=" + config.Port + " sslmode=" + config.SslMode + " TimeZone=" + config.TimeZone + "")); err != nil {
 				return err
 			}
 
@@ -34,14 +35,14 @@ func NewPostgres(lc fx.Lifecycle, config SConfig) *SPostgres {
 }
 
 func (r *SPostgres) setup() error {
-	if r.DB.Migrator().HasIndex(new(models.OrderModel), "idx_orders_id") {
-		err := r.DB.Migrator().DropIndex(new(models.OrderModel), "idx_orders_id")
+	if r.DB.Migrator().HasIndex(new(models.Order), "idx_orders_id") {
+		err := r.DB.Migrator().DropIndex(new(models.Order), "idx_orders_id")
 		if err != nil {
 			return err
 		}
 	}
 	return r.DB.AutoMigrate(
-		new(models.OrderModel),
+		new(models.Order),
 	)
 }
 

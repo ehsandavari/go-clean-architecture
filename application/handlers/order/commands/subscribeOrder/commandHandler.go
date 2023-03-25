@@ -48,10 +48,10 @@ func NewSubscribeOrderCommandHandler(
 	}
 }
 
-func (r SSubscribeOrderCommandHandler) Handle(ctx context.Context, command SSubscribeOrderCommand) (string, error) {
+func (r SSubscribeOrderCommandHandler) Handle(ctx context.Context, command SSubscribeOrderCommand) (string, mediator.IError) {
 	channel := r.iRedis.Subscribe(ctx, r.sConfig.Redis.Queues["Orders"])
 	go func() {
-		orderEntity := entities.OrderEntity{}
+		orderEntity := entities.Order{}
 		channelData := <-channel
 		if err := json.Unmarshal([]byte(channelData), &orderEntity); err != nil {
 			panic(err)
