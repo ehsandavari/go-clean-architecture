@@ -46,7 +46,7 @@ func newGetAllOrderByFilterQueryHandler(
 func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.OrderEntity], error) {
 	paginate, err := r.iUnitOfWork.OrderRepository().Paginate(Query.PaginateQuery)
 	if err != nil {
-		return nil, err
+		return nil, common.ErrorOrderNotFound
 	}
 	return paginate, nil
 }
