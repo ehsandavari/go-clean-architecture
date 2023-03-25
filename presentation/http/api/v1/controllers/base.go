@@ -32,11 +32,11 @@ type BaseApiResponse[TD any] struct {
 	err      error
 	httpCode int
 	Message  string `json:"message"`
-	Code     int64  `json:"code" format:"int64"`
+	Code     uint   `json:"code" format:"int64"`
 	Data     TD     `json:"data"`
 } //@name BaseApiResponse
 
-func newBaseApiResponse[TD any](error error, message string, code int64, data TD, httpCode int) BaseApiResponse[TD] {
+func newBaseApiResponse[TD any](error error, message string, code uint, data TD, httpCode int) BaseApiResponse[TD] {
 	return BaseApiResponse[TD]{
 		err:      error,
 		Message:  message,
