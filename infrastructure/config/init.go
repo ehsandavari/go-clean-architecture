@@ -3,7 +3,6 @@ package config
 import (
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
 	"github.com/ehsandavari/golang-clean-architecture/infrastructure/redis"
-	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"log"
@@ -20,11 +19,6 @@ func NewConfig() (*SConfig, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AutomaticEnv()
-
-	viper.OnConfigChange(func(event fsnotify.Event) {
-		log.Println("Config file changed:", event.String())
-	})
-	viper.WatchConfig()
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err

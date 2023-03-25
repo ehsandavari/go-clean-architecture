@@ -18,7 +18,8 @@ func NewPostgres(lc fx.Lifecycle, config *SConfig) *SPostgres {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			var err error
-			if sPostgres.DB, err = gorm.Open(postgres.Open(config.URL), &gorm.Config{}); err != nil {
+
+			if sPostgres.DB, err = gorm.Open(postgres.Open("host="+config.Host+" user="+config.User+" password="+config.Password+" dbname="+config.DatabaseName+" port="+config.Port+" sslmode="+config.SslMode+" TimeZone="+config.TimeZone+""), &gorm.Config{}); err != nil {
 				return err
 			}
 
