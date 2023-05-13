@@ -15,8 +15,11 @@ func I18n() gin.HandlerFunc {
 		log.Fatalln("error in os.Getwd in I18n middleware", err)
 	}
 	return i18n.Localize(i18n.WithBundle(&i18n.BundleCfg{
-		RootPath:         path + "/presentation/api/localize",
-		AcceptLanguage:   []language.Tag{language.English, language.Persian},
+		RootPath: path + "/presentation/api/localize",
+		AcceptLanguage: []language.Tag{
+			language.English,
+			language.Persian,
+		},
 		DefaultLanguage:  language.Persian,
 		UnmarshalFunc:    yaml.Unmarshal,
 		FormatBundleFile: "yaml",
