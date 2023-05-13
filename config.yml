@@ -1,26 +1,36 @@
 service:
   id: 1
-  name: golang-clean-architecture
+  name: go-clean-architecture
   version: 1.0.0
-  http:
+  mode: development # development, stage or production
+  gracefulShutdownSecond: 10
+  api:
+    isEnabled: true
     mode: debug # debug, release or test
     host: localhost
-    port: 8080
-  logger:
-    level: info # debug, info, warn, error, dPanic, panic or fatal
-    mode: development # development or production
-    encoder: console # console or json
+    port: 8001
+  grpc:
+    isEnabled: true
+    port: 8002
+    isDevelopment: true
+
+logger:
+  level: info # debug, info, warn, error, dPanic, panic or fatal
+  mode: development # development or production
+  encoder: console # console or json
+
+tracer:
+  IsEnabled: true
+  host: localhost
+  port: 6831
+  Sampler: true
+  UseStdout: false
 
 postgres:
   host: localhost
   port: 5432
   user: admin
   password: admin
-  databaseName: gorm
+  databaseName: go_clean_architecture
   sslMode: disable # enable or disable
   timeZone: Asia/Tehran
-
-redis:
-  url: localhost:6379
-  queues:
-    orders: orders

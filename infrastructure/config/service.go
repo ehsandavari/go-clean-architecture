@@ -1,13 +1,15 @@
 package config
 
 import (
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure/logger"
+	"github.com/ehsandavari/go-clean-architecture/domain/constants"
 )
 
 type SService struct {
-	Id      uint16          `validate:"required"`
-	Name    string          `validate:"required"`
-	Version string          `validate:"required"`
-	Http    Http            `validate:"required"`
-	Logger  *logger.SConfig `validate:"required"`
+	Id                     int                   `validate:"required"`
+	Name                   string                `validate:"required"`
+	Version                string                `validate:"required"`
+	Mode                   constants.ServiceMode `validate:"required"`
+	GracefulShutdownSecond byte                  `validate:"required"`
+	Api                    *SApi                 `validate:"required"`
+	Grpc                   *Grpc                 `validate:"required"`
 }

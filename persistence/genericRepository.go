@@ -1,29 +1,30 @@
 package persistence
 
 import (
+	"context"
 	"fmt"
-	"github.com/ehsandavari/golang-clean-architecture/application/common"
-	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres/models"
+	"github.com/ehsandavari/go-clean-architecture/application/common"
+	"github.com/ehsandavari/go-clean-architecture/domain/entities"
+	"github.com/ehsandavari/go-clean-architecture/infrastructure/postgres/models"
 	"github.com/google/uuid"
 	"strings"
 )
 
 type sGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint] struct {
-	*SDatabaseContext
+	*sDatabaseContext
 }
 
-func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *SDatabaseContext) sGenericRepository[TM, TE] {
+func newGenericRepository[TM models.IModel[TE], TE entities.IEntityConstraint](dataBaseContext *sDatabaseContext) sGenericRepository[TM, TE] {
 	return sGenericRepository[TM, TE]{
-		SDatabaseContext: dataBaseContext,
+		sDatabaseContext: dataBaseContext,
 	}
 }
 
-func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*common.PaginateResult[TE], error) {
+func (r sGenericRepository[TM, TE]) Paginate(ctx context.Context, listQuery *common.PaginateQuery) (*common.PaginateResult[TE], error) {
 	var model TM
 	var totalRows int64
-	r.Postgres.Model(model).Count(&totalRows)
-	query := r.Postgres.Model(model).Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
+	r.Postgres.WithContext(ctx).Model(model).Count(&totalRows)
+	query := r.Postgres.WithContext(ctx).Model(model).Offset(listQuery.GetOffset()).Limit(listQuery.GetLimit()).Order(listQuery.GetOrderBy())
 	if listQuery.Filters != nil {
 		for _, filter := range listQuery.Filters {
 			column := filter.Key
@@ -53,38 +54,68 @@ func (r sGenericRepository[TM, TE]) Paginate(listQuery common.PaginateQuery) (*c
 	return common.NewPaginateResult[TE](entitiesObjects, listQuery.GetPage(), listQuery.GetPerPage(), totalRows), nil
 }
 
-func (r sGenericRepository[TM, TE]) All() []TE {
+func (r sGenericRepository[TM, TE]) All(ctx context.Context) ([]TE, error) {
 	var model TM
 	var entitiesObjects []TE
-	r.Postgres.DB.Model(model).Find(&entitiesObjects)
-	return entitiesObjects
+	result := r.Postgres.WithContext(ctx).Model(model).Find(&entitiesObjects)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return entitiesObjects, nil
 }
 
-func (r sGenericRepository[TM, TE]) First() TE {
+func (r sGenericRepository[TM, TE]) FirstById(ctx context.Context, id uuid.UUID) (*TE, error) {
 	var model TM
-	r.Postgres.DB.First(&model)
-	return model.ToEntity()
+	result := r.Postgres.WithContext(ctx).First(&model, "id = ?", id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return model.ToEntity(), nil
 }
 
-func (r sGenericRepository[TM, TE]) Last() TE {
+func (r sGenericRepository[TM, TE]) First(ctx context.Context) (*TE, error) {
 	var model TM
-	r.Postgres.DB.Last(&model)
-	return model.ToEntity()
+	result := r.Postgres.WithContext(ctx).First(&model)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return model.ToEntity(), nil
 }
 
-func (r sGenericRepository[TM, TE]) Add(entity TE) int64 {
+func (r sGenericRepository[TM, TE]) Last(ctx context.Context) (*TE, error) {
+	var model TM
+	result := r.Postgres.WithContext(ctx).Last(&model)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return model.ToEntity(), nil
+}
+
+func (r sGenericRepository[TM, TE]) Create(ctx context.Context, entity *TE) (int64, error) {
 	var model TM
 	model = model.FromEntity(entity).(TM)
-	return r.Postgres.DB.Create(&model).RowsAffected
+	result := r.Postgres.WithContext(ctx).Create(&model)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return result.RowsAffected, nil
 }
 
-func (r sGenericRepository[TM, TE]) Update(id uuid.UUID, entity TE) int64 {
+func (r sGenericRepository[TM, TE]) Update(ctx context.Context, id uuid.UUID, entity *TE) (int64, error) {
 	var model TM
 	model = model.FromEntity(entity).(TM)
-	return r.Postgres.DB.Where("id", id).Updates(&model).RowsAffected
+	result := r.Postgres.WithContext(ctx).Where("id", id).Updates(&model)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return result.RowsAffected, nil
 }
 
-func (r sGenericRepository[TM, TE]) Delete(id uuid.UUID) int64 {
+func (r sGenericRepository[TM, TE]) Delete(ctx context.Context, id uuid.UUID) (int64, error) {
 	var model TM
-	return r.Postgres.DB.Delete(&model, id).RowsAffected
+	result := r.Postgres.WithContext(ctx).Delete(&model, id)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return result.RowsAffected, nil
 }

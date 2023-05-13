@@ -2,39 +2,34 @@ package GetAllOrderByFilter
 
 import (
 	"context"
+	"github.com/ehsandavari/go-clean-architecture/application"
+	"github.com/ehsandavari/go-clean-architecture/application/common"
+	"github.com/ehsandavari/go-clean-architecture/application/common/interfaces"
+	"github.com/ehsandavari/go-clean-architecture/domain/entities"
+	"github.com/ehsandavari/go-clean-architecture/infrastructure/config"
 	"github.com/ehsandavari/go-mediator"
-	"github.com/ehsandavari/golang-clean-architecture/application"
-	"github.com/ehsandavari/golang-clean-architecture/application/common"
-	ApplicationInterfaces "github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/ehsandavari/golang-clean-architecture/domain/entities"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure/config"
-	"go.uber.org/fx"
 )
 
 func init() {
-	application.Modules = append(application.Modules, fx.Invoke(func(
-		sConfig *config.SConfig,
-		iLogger ApplicationInterfaces.ILogger,
-		iUnitOfWork ApplicationInterfaces.IUnitOfWork,
-	) {
-		if err := mediator.RegisterRequestHandler[SGetAllOrderByFilterQuery, *common.PaginateResult[entities.Order]](
-			newGetAllOrderByFilterQueryHandler(sConfig, iLogger, iUnitOfWork),
+	application.Handlers = append(application.Handlers, func(application *application.Application) {
+		if err := mediator.RegisterRequestHandler[SGetAllOrderByFilterQuery, *common.PaginateResult[entities.Song]](
+			newGetAllOrderByFilterQueryHandler(application.SConfig, application.ILogger, application.IUnitOfWork),
 		); err != nil {
 			panic(err)
 		}
-	}))
+	})
 }
 
 type SGetAllOrderByFilterQueryHandler struct {
 	sConfig     *config.SConfig
-	iLogger     ApplicationInterfaces.ILogger
-	iUnitOfWork ApplicationInterfaces.IUnitOfWork
+	iLogger     interfaces.ILogger
+	iUnitOfWork interfaces.IUnitOfWork
 }
 
 func newGetAllOrderByFilterQueryHandler(
 	sConfig *config.SConfig,
-	iLogger ApplicationInterfaces.ILogger,
-	iUnitOfWork ApplicationInterfaces.IUnitOfWork,
+	iLogger interfaces.ILogger,
+	iUnitOfWork interfaces.IUnitOfWork,
 ) SGetAllOrderByFilterQueryHandler {
 	return SGetAllOrderByFilterQueryHandler{
 		sConfig:     sConfig,
@@ -43,8 +38,8 @@ func newGetAllOrderByFilterQueryHandler(
 	}
 }
 
-func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.Order], mediator.IError) {
-	paginate, err := r.iUnitOfWork.OrderRepository().Paginate(Query.PaginateQuery)
+func (r SGetAllOrderByFilterQueryHandler) Handle(ctx context.Context, Query SGetAllOrderByFilterQuery) (*common.PaginateResult[entities.Song], mediator.IError) {
+	paginate, err := r.iUnitOfWork.SongRepository().Paginate(ctx, Query.PaginateQuery)
 	if err != nil {
 		return nil, common.ErrorOrderNotFound
 	}

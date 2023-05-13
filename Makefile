@@ -9,7 +9,7 @@ run: linter-golangci swagger ### run
 
 swagger: ### init swagger
 	swag fmt
-	swag init --parseDependency --parseInternal --parseDepth 1 --generalInfo ./presentation/http/api/v1/setup.go --output ./presentation/http/api/docs --outputTypes go --instanceName v1
+	swag init --parseDependency --parseInternal --parseDepth 1 --generalInfo ./presentation/api/v1/v1.go --output ./presentation/api/docs --instanceName v1 --generatedTime true
 .PHONY: swagger
 
 linter-golangci: ### check by golangci linter
@@ -27,4 +27,9 @@ install-deps: ### install all dependencies
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/golang/mock/mockgen@latest
 	go install golang.org/x/tools/cmd/stringer@latest
+.PHONY: install-deps
 
+
+proto: ### init proto
+	protoc --go_out=presentation/grpc/proto/bankAccount/ --go-grpc_opt=require_unimplemented_servers=false --go-grpc_out=presentation/grpc/proto/bankAccount/ presentation/grpc/proto/bankAccount/*.proto
+.PHONY: proto

@@ -1,12 +1,12 @@
 package GetAllOrderByFilter
 
-import "github.com/ehsandavari/golang-clean-architecture/application/common"
+import "github.com/ehsandavari/go-clean-architecture/application/common"
 
 type SGetAllOrderByFilterQuery struct {
-	common.PaginateQuery
+	*common.PaginateQuery
 }
 
-func NewSGetAllOrderByFilterQuery(paginateQuery common.PaginateQuery) SGetAllOrderByFilterQuery {
+func NewSGetAllOrderByFilterQuery(paginateQuery *common.PaginateQuery) SGetAllOrderByFilterQuery {
 	return SGetAllOrderByFilterQuery{
 		PaginateQuery: paginateQuery,
 	}

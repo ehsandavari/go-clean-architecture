@@ -1,18 +1,18 @@
 package persistence
 
 import (
-	"github.com/ehsandavari/golang-clean-architecture/application/common/interfaces"
-	"github.com/ehsandavari/golang-clean-architecture/infrastructure/postgres"
+	"github.com/ehsandavari/go-clean-architecture/infrastructure/postgres"
+	"github.com/ehsandavari/go-logger"
 )
 
-type SDatabaseContext struct {
-	Logger   interfaces.ILogger
+type sDatabaseContext struct {
+	Logger   logger.ILogger
 	Postgres *postgres.SPostgres
 }
 
-func newDatabaseContext(postgres *postgres.SPostgres, logger interfaces.ILogger) (*SDatabaseContext, error) {
-	return &SDatabaseContext{
+func newDatabaseContext(logger logger.ILogger, postgres *postgres.SPostgres) *sDatabaseContext {
+	return &sDatabaseContext{
 		Logger:   logger,
 		Postgres: postgres,
-	}, nil
+	}
 }

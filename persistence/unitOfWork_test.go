@@ -65,20 +65,20 @@ package persistence
 //	t.Run("Rollback on error", func(t *testing.T) {
 //		unitOfWork := NewUnitOfWork(s.db)
 //		err = unitOfWork.Do(func(work DomainInterfaces.IUnitOfWork) error {
-//			_ = work.sOrderRepository().Add(name)
+//			_ = work.sSongRepository().Create(name)
 //			require.NoError(t, err)
 //
 //			name.Id = 2
 //			name.Price = 24
 //			name.Title = "test"
-//			_ = work.sOrderRepository().Add(name)
+//			_ = work.sSongRepository().Create(name)
 //			require.NoError(t, err)
 //
 //			return nil
 //		})
 //
 //		if assert.ErrorIs(t, err, nil) {
-//			find := unitOfWork.sOrderRepository().Find()
+//			find := unitOfWork.sSongRepository().Find()
 //			assert.EqualValues(t, find, nil)
 //		}
 //	})
